@@ -1,0 +1,2392 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+/* =========================================================
+   HUSKY — SISTEMA VISUAL
+   Identidad oficial:
+   Verde: #005a25
+   Vino:  #741203
+   Fondo: #f8f8f2
+   ========================================================= */
+.husky-site {
+    --husky-forest: #34463A;
+    --husky-forest-deep: #223A2D;
+    --husky-burgundy: #741203;
+    --husky-olive: #005A25;
+    --husky-sage: #E7E9DF;
+    --husky-linen: #f1eee8;
+    --husky-paper: #f9f8f6;
+    --husky-ink: #293A30;
+    --husky-muted: #69766B;
+    --husky-line: rgba(0, 90, 37, 0.15);
+    --husky-soft-line: rgba(0, 90, 37, 0.09);
+    --husky-accent: #D8DFD0;
+
+    color: var(--husky-ink);
+    background: var(--husky-paper);
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+}
+
+.husky-site *,
+.husky-site *::before,
+.husky-site *::after {
+    box-sizing: border-box;
+}
+
+.husky-brand-logo {
+    display: block;
+    width: 115px !important;
+    height: 100%;
+    object-fit: cover;
+}
+
+.husky-site img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.husky-site a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.husky-site button,
+.husky-site input,
+.husky-site select,
+.husky-site textarea {
+    font: inherit;
+}
+
+.husky-site h1,
+.husky-site h2,
+.husky-site h3,
+.husky-site p {
+    margin-top: 0;
+}
+
+.husky-site h1,
+.husky-site h2,
+.husky-site h3 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    letter-spacing: -.04em;
+}
+
+.husky-site h2 {
+    margin-bottom: 22px;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    line-height: 1.16;
+}
+
+.husky-site p {
+    line-height: 1.8;
+}
+
+.husky-container {
+    width: min(1240px, calc(100% - 9vw));
+    margin-inline: auto;
+}
+
+.husky-section {
+    padding: clamp(72px, 8vw, 112px) 0;
+}
+
+/* =========================================================
+   LOGOTIPOS
+   ========================================================= */
+
+.husky-brand {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.husky-brand-logo {
+    display: block;
+    width: 190px;
+    max-width: 100%;
+    height: 58px;
+    object-fit: contain !important;
+    object-position: left center;
+}
+
+.husky-brand-logo-white {
+    width: 190px;
+    height: 58px;
+    object-fit: contain !important;
+    object-position: left center;
+}
+
+.husky-brand-light {
+    color: #fff;
+}
+
+/* Mantiene compatibilidad con el logotipo CSS anterior */
+
+.husky-brand-mark {
+    display: grid;
+    grid-template-columns: repeat(2, 11px);
+    grid-template-rows: repeat(2, 11px);
+    gap: 3px;
+    transform: skewY(-2deg);
+}
+
+.husky-brand-mark i {
+    display: block;
+    background: var(--husky-forest);
+}
+
+.husky-brand-mark i:nth-child(2),
+.husky-brand-mark i:nth-child(3) {
+    opacity: .72;
+}
+
+.husky-brand-word {
+    font: 700 22px/1 'Manrope', sans-serif;
+    letter-spacing: .12em;
+}
+
+.husky-brand-word small {
+    display: block;
+    font: 600 8px/1.8 'DM Sans', sans-serif;
+    letter-spacing: .32em;
+}
+
+.husky-brand-light .husky-brand-mark i {
+    background: #fff;
+}
+
+.husky-brand-light .husky-brand-word {
+    font-size: 20px;
+}
+
+/* =========================================================
+   ENCABEZADO Y NAVEGACIÓN
+   ========================================================= */
+
+.husky-header {
+    position: absolute;
+    z-index: 20;
+    inset: 0 0 auto;
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 0 max(4.5vw, calc((100vw - 1240px) / 2));
+    color: var(--husky-forest);
+    background:var(--husky-linen);
+    border-bottom: 1px solid rgba(0, 90, 37, .08);
+    backdrop-filter: blur(16px);
+}
+
+.husky-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 2.4vw, 36px);
+    margin-inline: auto;
+}
+
+.husky-nav a {
+    position: relative;
+    padding: 10px 0;
+    color: #3d5144;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color .2s ease;
+}
+
+.husky-nav a:hover {
+    color: var(--husky-burgundy);
+}
+
+.husky-nav a::after {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    margin: auto;
+    background: var(--husky-burgundy);
+    content: '';
+    transition: width .25s ease;
+}
+
+.husky-nav a:hover::after,
+.husky-nav a.is-active::after {
+    width: 100%;
+}
+
+.husky-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 0 23px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        color .25s ease,
+        border-color .25s ease;
+}
+
+.husky-button:hover {
+    transform: translateY(-2px);
+}
+
+.husky-button:focus-visible,
+.husky-text-link:focus-visible,
+.husky-video-link:focus-visible,
+.husky-menu-toggle:focus-visible,
+.husky-modal-close:focus-visible {
+    outline: 3px solid #b6c79a;
+    outline-offset: 4px;
+}
+
+.husky-button-solid {
+    color: #fff !important;
+    background: var(--husky-forest);
+    border-color: var(--husky-forest);
+}
+
+.husky-button-solid:hover {
+    color: #fff !important;
+    background: var(--husky-burgundy);
+    border-color: var(--husky-burgundy);
+}
+
+.husky-button-outline {
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, .66);
+    background: rgba(255, 255, 255, .05);
+}
+
+.husky-button-outline:hover {
+    color: var(--husky-forest) !important;
+    background: #fff;
+    border-color: #fff;
+}
+
+.husky-header-cta {
+    min-height: 43px;
+    padding-inline: 20px;
+    white-space: nowrap;
+}
+
+.husky-menu-toggle {
+    display: none;
+}
+
+/* =========================================================
+   PORTADA
+   ========================================================= */
+
+.husky-hero {
+    position: relative;
+    display: flex;
+    min-height: min(780px, 92vh);
+    min-height: min(780px, 92svh);
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+    background: #334c3d;
+}
+
+.husky-hero-image {
+    position: absolute;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2400&q=90') center 53% / cover no-repeat;
+    animation: husky-hero-settle 1.5s ease-out both;
+}
+
+.husky-hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(20, 39, 29, .78) 0%, rgba(25, 45, 34, .58) 39%, rgba(25, 43, 32, .2) 74%, rgba(20, 34, 25, .12) 100%),
+        linear-gradient(0deg, rgba(18, 34, 26, .42), transparent 42%, rgba(245, 239, 219, .04));
+}
+
+.husky-hero-content {
+    position: relative;
+    z-index: 2;
+    padding-top: 92px;
+    padding-bottom: 52px;
+}
+
+.husky-eyebrow {
+    margin-bottom: 17px;
+    color: var(--husky-burgundy);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    line-height: 1.6;
+}
+
+.husky-eyebrow-light {
+    color: #e1e8d6;
+}
+
+.husky-eyebrow > span {
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    margin: 0 9px 3px 0;
+    background: currentColor;
+}
+
+.husky-hero h1 {
+    max-width: 640px;
+    margin-bottom: 24px;
+    font-size: 3rem;
+    line-height: 1.07;
+    letter-spacing: -.055em;
+}
+
+.husky-hero-copy {
+    max-width: 475px;
+    margin-bottom: 32px;
+    color: rgba(255, 255, 255, .86);
+    font-size: 16px;
+    line-height: 1.85;
+}
+
+.husky-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 30px;
+}
+
+.husky-video-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    color: #fff;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.husky-play {
+    display: grid;
+    width: 45px;
+    height: 45px;
+    place-items: center;
+    padding-left: 2px;
+    border: 1px solid rgba(255, 255, 255, .75);
+    border-radius: 50%;
+    transition: background .2s ease, color .2s ease;
+}
+
+.husky-video-link:hover .husky-play {
+    color: var(--husky-forest);
+    background: #fff;
+}
+
+.husky-video-link > span:last-child {
+    font-size: 13px;
+}
+
+.husky-video-link small {
+    display: block;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, .72);
+    font-size: 11px;
+}
+
+.husky-hero-note {
+    position: absolute;
+    z-index: 2;
+    right: 5vw;
+    bottom: 42px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, .9);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.husky-scroll-cue {
+    position: absolute;
+    z-index: 2;
+    bottom: 28px;
+    left: 50%;
+    display: grid;
+    width: 24px;
+    height: 30px;
+    place-items: center;
+    color: #fff;
+}
+
+@keyframes husky-hero-settle {
+    from {
+        transform: scale(1.045);
+    }
+
+    to {
+        transform: scale(1.015);
+    }
+}
+
+/* =========================================================
+   INTRODUCCIÓN / EMPRESA
+   ========================================================= */
+
+.husky-intro {
+    background: var(--husky-linen);
+}
+
+.husky-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.08fr;
+    align-items: center;
+    gap: clamp(44px, 7vw, 100px);
+}
+
+.husky-intro-photo {
+    position: relative;
+    height: clamp(340px, 38vw, 510px);
+    min-height: 340px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #d9ded1;
+}
+
+.husky-intro-photo img {
+    border-radius: inherit;
+    transition: transform .7s ease;
+}
+
+.husky-intro-photo:hover img {
+    transform: scale(1.035);
+}
+
+.husky-intro-photo > span {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 11px 15px;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .15);
+    border-radius: 6px;
+    background: rgba(31, 49, 39, .78);
+    font-size: 11px;
+}
+
+.husky-body-copy {
+    max-width: 570px;
+    color: var(--husky-muted);
+    font-size: 15px;
+    line-height: 1.85;
+}
+
+.husky-values {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid var(--husky-line);
+}
+
+.husky-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-right: 8px;
+}
+
+.husky-value > span {
+    display: grid;
+    width: 37px;
+    height: 37px;
+    place-items: center;
+    margin-bottom: 13px;
+    border: 1px solid #b5c1a6;
+    border-radius: 50%;
+    color: var(--husky-forest);
+    background: rgba(255, 255, 255, .5);
+}
+
+.husky-value strong {
+    color: var(--husky-ink);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.husky-value small {
+    margin-top: 5px;
+    color: var(--husky-muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   PRODUCTOS
+   ========================================================= */
+
+.husky-products {
+    background: var(--husky-paper);
+}
+
+.husky-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 36px;
+}
+
+.husky-section-heading h2 {
+    margin-bottom: 0;
+}
+
+.husky-text-link {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    color: var(--husky-forest);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.husky-text-link svg {
+    color: var(--husky-burgundy);
+    transition: transform .2s ease;
+}
+
+.husky-text-link:hover svg {
+    transform: translate(3px, -3px);
+}
+
+.husky-product-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.husky-product-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgba(0, 90, 37, .1);
+    border-radius: 12px;
+    background: #fff;
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.husky-product-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--husky-line);
+    box-shadow: 0 12px 30px rgba(28, 43, 32, .07);
+}
+
+.husky-product-image {
+    position: relative;
+    height: clamp(140px, 16vw, 205px);
+    overflow: hidden;
+    background: #deded3;
+}
+
+.husky-product-image img {
+    transition: transform .6s ease;
+}
+
+.husky-product-card:hover .husky-product-image img {
+    transform: scale(1.04);
+}
+
+.husky-product-image > span {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 7px 9px;
+    color: #fff;
+    border-radius: 4px;
+    background: var(--husky-forest);
+    font-size: 10px;
+    letter-spacing: .04em;
+}
+
+.husky-product-info {
+    position: relative;
+    min-height: 164px;
+    padding: 19px 17px 44px;
+}
+
+.husky-product-info h3 {
+    margin-bottom: 9px;
+    color: var(--husky-ink);
+    font-size: 18px;
+    line-height: 1.4;
+    letter-spacing: -.03em;
+}
+
+.husky-product-info p {
+    margin-bottom: 0;
+    color: var(--husky-muted);
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.husky-card-arrow {
+    position: absolute;
+    bottom: 15px;
+    left: 17px;
+    color: var(--husky-burgundy);
+    transition: transform .2s ease;
+}
+
+.husky-product-card:hover .husky-card-arrow {
+    transform: translate(3px, -3px);
+}
+
+.husky-products-note,
+.husky-clients-note {
+    margin: 24px auto 0;
+    color: var(--husky-muted);
+    font-size: 12px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.husky-products-note {
+    max-width: 780px;
+}
+
+/* =========================================================
+   SERVICIOS
+   ========================================================= */
+
+.husky-services {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(76px, 9vw, 122px) 0;
+    color: #fff;
+    background:var(--husky-forest);
+}
+
+.husky-services::before,
+.husky-services::after {
+    position: absolute;
+    z-index: -1;
+    content: '';
+    pointer-events: none;
+    border: 1px solid rgba(231, 239, 221, .08);
+    border-radius: 50%;
+}
+
+.husky-services::before {
+    top: -250px;
+    right: -120px;
+    width: 520px;
+    height: 520px;
+}
+
+.husky-services::after {
+    top: -165px;
+    right: -35px;
+    width: 350px;
+    height: 350px;
+}
+
+.husky-services-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+    align-items: start;
+    gap: clamp(48px, 8vw, 112px);
+}
+
+.husky-services-intro {
+    padding-top: 8px;
+}
+
+.husky-services-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 27px;
+    color: #dce6d1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .16em;
+}
+
+.husky-services-kicker-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #cbdab2;
+    box-shadow: 0 0 0 5px rgba(197, 215, 165, .09);
+}
+
+.husky-services-intro h2 {
+    max-width: 490px;
+    margin-bottom: 23px;
+    color: #fff;
+    font-size: clamp(2.35rem, 4vw, 3.65rem);
+    line-height: 1.12;
+    letter-spacing: -.055em;
+}
+
+.husky-services-intro h2 span {
+    display: block;
+    color: #d2dfc2;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+}
+
+.husky-services-lead {
+    max-width: 430px;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+.husky-services-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 31px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.husky-services-cta-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: 50%;
+    transition: color .25s ease, background .25s ease, border-color .25s ease, transform .25s ease;
+}
+
+.husky-services-cta:hover .husky-services-cta-icon {
+    color: var(--husky-forest);
+    background: #e5ecd9;
+    border-color: #e5ecd9;
+    transform: translateX(3px);
+}
+
+.husky-services-caption {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    max-width: 330px;
+    margin-top: 58px;
+    padding-top: 19px;
+    border-top: 1px solid rgba(255, 255, 255, .17);
+    color: rgba(255, 255, 255, .66);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.husky-services-caption svg {
+    flex: 0 0 auto;
+    color: #d2dfc2;
+}
+
+.husky-service-list {
+    border-top: 1px solid rgba(255, 255, 255, .22);
+}
+
+.husky-service-item {
+    display: grid;
+    grid-template-columns: 35px minmax(0, 1fr) 28px;
+    align-items: start;
+    gap: 17px;
+    padding: 25px 0 26px;
+    border-bottom: 1px solid rgba(255, 255, 255, .18);
+    transition: padding .25s ease, border-color .25s ease;
+}
+
+.husky-service-item:hover {
+    padding-right: 4px;
+    padding-left: 4px;
+    border-bottom-color: rgba(220, 232, 204, .45);
+}
+
+.husky-service-number {
+    padding-top: 5px;
+    color: #d2dfc2;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+}
+
+.husky-service-content h3 {
+    margin-bottom: 9px;
+    color: #fff;
+    font-size: clamp(16px, 1.5vw, 19px);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -.025em;
+}
+
+.husky-service-content p {
+    max-width: 470px;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.husky-service-arrow {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    margin-top: 1px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 50%;
+    color: #dce6d0;
+    transition: transform .25s ease, color .25s ease, background .25s ease, border-color .25s ease;
+}
+
+.husky-service-item:hover .husky-service-arrow {
+    color: var(--husky-forest);
+    background: #dce6d0;
+    border-color: #dce6d0;
+    transform: translate(2px, -2px);
+}
+
+.husky-services-more {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding-top: 21px;
+    color: rgba(255, 255, 255, .68);
+    font-size: 12px;
+}
+
+.husky-services-more strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #e0e9d5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.husky-services-more strong svg {
+    transition: transform .2s ease;
+}
+
+.husky-services-more:hover strong svg {
+    transform: translateX(3px);
+}
+
+.husky-services a:focus-visible {
+    outline: 2px solid #dce6d0;
+    outline-offset: 5px;
+}
+
+/* =========================================================
+   APLICACIONES
+   ========================================================= */
+
+.husky-applications {
+    background: var(--husky-linen);
+}
+
+.husky-applications-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.husky-application-item {
+    display: flex;
+    min-height: 82px;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--husky-line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .72);
+    transition: border-color .25s ease, transform .25s ease, background .25s ease;
+}
+
+.husky-application-item:hover {
+    transform: translateY(-3px);
+    border-color: #aab89a;
+    background: #fff;
+}
+
+.husky-application-item > span {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    place-items: center;
+    border: 1px solid #c5cdbb;
+    border-radius: 50%;
+    color: var(--husky-forest);
+    background: #fafbf7;
+}
+
+.husky-application-item p {
+    margin: 0;
+    color: var(--husky-ink);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   ¿POR QUÉ HUSKY?
+   ========================================================= */
+
+.husky-reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 32px;
+}
+
+.husky-reason-card {
+    position: relative;
+    padding: 26px 22px;
+    border: 1px solid var(--husky-line);
+    border-radius: 14px;
+    background: var(--husky-paper);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.husky-reason-card:hover {
+    transform: translateY(-3px);
+    border-color: #b2bea5;
+    box-shadow: 0 10px 26px rgba(28, 43, 32, .045);
+}
+
+.husky-reason-number {
+    display: block;
+    margin-bottom: 22px;
+    color: var(--husky-burgundy);
+    font-size: 12px;
+    letter-spacing: .12em;
+}
+
+.husky-reason-icon {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 18px;
+    place-items: center;
+    border: 1px solid var(--husky-line);
+    border-radius: 12px;
+    color: var(--husky-forest);
+    background: var(--husky-linen);
+}
+
+.husky-reason-card h3 {
+    margin: 0 0 10px;
+    color: var(--husky-ink);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.husky-reason-card p {
+    margin: 0;
+    color: var(--husky-muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* =========================================================
+   PROYECTO DESTACADO
+   Fondo claro y texto oscuro
+   ========================================================= */
+
+.husky-project {
+    display: grid;
+    grid-template-columns: .85fr 1.15fr;
+    min-height: 420px;
+    color: var(--husky-ink);
+    background: var(--husky-linen);
+}
+
+.husky-project-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 75px clamp(28px, 5vw, 80px);
+}
+
+.husky-project-copy h2 {
+    max-width: 430px;
+    color: var(--husky-forest);
+    font-size: clamp(2rem, 3.5vw, 3.3rem);
+    line-height: 1.15;
+}
+
+.husky-project-copy > p:not(.husky-eyebrow) {
+    max-width: 380px;
+    color: var(--husky-muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.husky-project-copy .husky-eyebrow {
+    color: var(--husky-burgundy);
+}
+
+.husky-project-copy .husky-button {
+    margin-top: 10px;
+}
+
+.husky-project-copy .husky-button-solid {
+    color: #fff !important;
+    background: var(--husky-forest);
+    border-color: var(--husky-forest);
+}
+
+.husky-project-copy .husky-button-solid:hover {
+    background: var(--husky-burgundy);
+    border-color: var(--husky-burgundy);
+}
+
+.husky-project-image {
+    min-height: 420px;
+    overflow: hidden;
+    background: #dce2d4;
+}
+
+.husky-project-image img {
+    transition: transform .8s ease;
+}
+
+.husky-project:hover .husky-project-image img {
+    transform: scale(1.02);
+}
+
+/* =========================================================
+   CLIENTES
+   ========================================================= */
+
+.husky-clients {
+    background: var(--husky-paper);
+}
+
+.husky-clients-heading {
+    max-width: 660px;
+    margin: 0 auto 42px;
+    text-align: center;
+}
+
+.husky-clients-heading h2 {
+    margin: 12px 0 16px;
+    color: var(--husky-forest);
+    font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+    line-height: 1.2;
+    letter-spacing: -.04em;
+}
+
+.husky-clients-heading > p:last-child {
+    max-width: 560px;
+    margin: 0 auto;
+    color: var(--husky-muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.husky-clients-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.husky-client-logo {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 120px;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    overflow: hidden;
+    border: 1px solid var(--husky-soft-line);
+    border-radius: 12px;
+    background: #fff;
+    transition: border-color .25s ease, background .25s ease, transform .25s ease;
+}
+
+.husky-client-logo:hover {
+    background: var(--husky-linen);
+    border-color: #b5c2a7;
+    transform: translateY(-3px);
+}
+
+.husky-client-logo img {
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    height: 68px;
+    object-fit: contain;
+}
+
+.husky-client-placeholder {
+    display: none;
+}
+
+/* =========================================================
+   CONTACTO Y FORMULARIO
+   ========================================================= */
+
+.husky-contact {
+    background: var(--husky-linen);
+}
+
+.husky-contact-grid {
+    display: grid;
+    grid-template-columns: .82fr 1.18fr;
+    gap: clamp(50px, 9vw, 135px);
+}
+
+.husky-contact-copy h2 {
+    font-size: clamp(2.25rem, 3.6vw, 3.3rem);
+}
+
+.husky-contact-copy > p:not(.husky-eyebrow) {
+    max-width: 390px;
+    margin-bottom: 32px;
+    color: var(--husky-muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.husky-contact-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.husky-contact-detail > span {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    place-items: center;
+    border: 1px solid #c5cdbb;
+    border-radius: 50%;
+    color: var(--husky-forest);
+    background: rgba(255, 255, 255, .55);
+}
+
+.husky-contact-detail small {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--husky-muted);
+    font-size: 11px;
+}
+
+.husky-contact-detail a,
+.husky-contact-detail p {
+    margin: 0;
+    color: var(--husky-ink);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.husky-contact-detail a:hover {
+    color: var(--husky-burgundy);
+}
+
+.husky-quote-form {
+    padding: clamp(24px, 4vw, 42px);
+    border: 1px solid rgba(0, 90, 37, .1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .9);
+    box-shadow: 0 12px 34px rgba(31, 52, 39, .035);
+}
+
+.husky-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.husky-quote-form label {
+    display: block;
+    margin-bottom: 17px;
+    color: #536057;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+
+.husky-quote-form input,
+.husky-quote-form select,
+.husky-quote-form textarea {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 15px;
+    border: 1px solid #d9e0d6;
+    border-radius: 8px;
+    outline: 0;
+    color: var(--husky-ink);
+    background: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.husky-quote-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.husky-quote-form input:focus,
+.husky-quote-form select:focus,
+.husky-quote-form textarea:focus {
+    border-color: var(--husky-forest);
+    box-shadow: 0 0 0 3px rgba(0, 90, 37, .1);
+}
+
+.husky-quote-form input::placeholder,
+.husky-quote-form textarea::placeholder {
+    color: #929d92;
+}
+
+.husky-select-wrap {
+    position: relative;
+    display: block;
+}
+
+.husky-select-wrap select {
+    appearance: none;
+    padding-right: 38px;
+}
+
+.husky-select-wrap svg {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    pointer-events: none;
+    transform: translateY(-25%);
+}
+
+.husky-submit {
+    min-width: 205px;
+    border: 0;
+}
+
+.husky-form-note,
+.husky-form-feedback {
+    margin: 12px 0 0;
+    color: #758075;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.husky-form-feedback {
+    color: var(--husky-forest);
+}
+
+/* =========================================================
+   PIE DE PÁGINA
+   ========================================================= */
+
+.husky-footer {
+    color: #fff;
+    background: var(--husky-forest-deep);
+}
+
+.husky-footer-main {
+    display: flex;
+    min-height: 120px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.husky-footer-main nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(18px, 2.5vw, 34px);
+}
+
+.husky-footer-main nav a,
+.husky-back-top {
+    color: rgba(255, 255, 255, .78);
+    font-size: 12px;
+    line-height: 1.7;
+    transition: color .2s ease;
+}
+
+.husky-footer-main nav a:hover,
+.husky-back-top:hover {
+    color: #fff;
+}
+
+.husky-footer-bottom {
+    display: flex;
+    min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+    color: rgba(255, 255, 255, .64);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.husky-footer-bottom > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.husky-footer-bottom svg {
+    color: #d0dbbf;
+}
+
+/* =========================================================
+   MODAL DE VIDEO
+   ========================================================= */
+
+.husky-video-modal {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(13, 27, 20, .76);
+    backdrop-filter: blur(5px);
+}
+
+.husky-video-modal-panel {
+    position: relative;
+    width: min(560px, 100%);
+    padding: clamp(30px, 6vw, 56px);
+    border: 1px solid rgba(0, 90, 37, .08);
+    border-radius: 18px;
+    background: var(--husky-linen);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .16);
+}
+
+.husky-video-modal-panel h2 {
+    font-size: clamp(2rem, 4vw, 2.7rem);
+}
+
+.husky-video-modal-panel > p:not(.husky-eyebrow) {
+    color: var(--husky-muted);
+    font-size: 14px;
+}
+
+.husky-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    color: var(--husky-forest);
+    background: transparent;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.husky-modal-close:hover {
+    background: rgba(0, 90, 37, .08);
+}
+
+/* =========================================================
+   WHATSAPP FLOTANTE
+   ========================================================= */
+
+.husky-whatsapp {
+    position: fixed;
+    z-index: 1000;
+    right: 26px;
+    bottom: 26px;
+    display: flex;
+    width: 60px;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: #279b62;
+    border: 1px solid rgba(255, 255, 255, .85);
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(20, 60, 35, .2);
+    transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+}
+
+.husky-whatsapp:hover {
+    color: #fff;
+    background: #218653;
+    box-shadow: 0 10px 28px rgba(20, 60, 35, .25);
+    transform: translateY(-3px);
+}
+
+.husky-whatsapp svg {
+    color: #fff;
+    display: block;
+    width: 29px;
+    height: 29px;
+    flex: 0 0 auto;
+}
+
+.husky-whatsapp-tooltip {
+    position: absolute;
+    right: 72px;
+    width: max-content;
+    max-width: 220px;
+    padding: 10px 14px;
+    color: #fff;
+    background: var(--husky-forest-deep);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(5px);
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.husky-whatsapp:hover .husky-whatsapp-tooltip,
+.husky-whatsapp:focus-visible .husky-whatsapp-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.husky-whatsapp:focus-visible {
+    outline: 3px solid #b7c99b;
+    outline-offset: 4px;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (min-width: 1500px) {
+    .husky-hero {
+        min-height: 800px;
+    }
+}
+
+@media (max-width: 1050px) {
+    .husky-header {
+        gap: 18px;
+    }
+
+    .husky-nav {
+        gap: 17px;
+    }
+
+    .husky-nav a {
+        font-size: 12px;
+    }
+
+    .husky-brand-word {
+        font-size: 19px;
+    }
+
+    .husky-header-cta {
+        padding-inline: 15px;
+        font-size: 11px;
+    }
+
+    .husky-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .husky-product-image {
+        height: 210px;
+    }
+
+    .husky-project {
+        grid-template-columns: .9fr 1.1fr;
+    }
+
+    .husky-project-copy {
+        padding: 60px 35px;
+    }
+
+    .husky-project-image {
+        min-height: 400px;
+    }
+
+    .husky-clients-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .husky-reasons-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — MÓVIL
+   ========================================================= */
+
+@media (max-width: 780px) {
+    .husky-container {
+        width: min(calc(100% - 40px), 1240px);
+    }
+
+    .husky-header {
+        min-height: 74px;
+        padding-inline: 20px;
+    }
+
+    .husky-brand-logo,
+    .husky-brand-logo-white {
+        width: 155px;
+        height: 48px;
+    }
+
+    .husky-brand-word {
+        font-size: 18px;
+    }
+
+    .husky-brand-mark {
+        grid-template-columns: repeat(2, 9px);
+        grid-template-rows: repeat(2, 9px);
+    }
+
+    .husky-menu-toggle {
+        display: flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        border: 1px solid var(--husky-line);
+        border-radius: 50%;
+        color: var(--husky-forest);
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .husky-nav {
+        position: absolute;
+        top: 74px;
+        right: 0;
+        left: 0;
+        display: none;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 20px 18px;
+        margin: 0;
+        border-top: 1px solid var(--husky-line);
+        background: var(--husky-linen);
+        box-shadow: 0 14px 24px rgba(20, 35, 25, .06);
+    }
+
+    .husky-nav.is-open {
+        display: flex;
+    }
+
+    .husky-nav a {
+        padding: 13px 2px;
+        font-size: 14px;
+    }
+
+    .husky-nav a::after {
+        display: none;
+    }
+
+    .husky-header-cta {
+        display: none;
+    }
+
+    .husky-hero {
+        min-height: 720px;
+        min-height: 90svh;
+        align-items: flex-end;
+    }
+
+    .husky-hero-image {
+        background-position: 57% center;
+    }
+
+    .husky-hero-shade {
+        background:
+            linear-gradient(90deg, rgba(17, 35, 27, .76), rgba(17, 35, 27, .34)),
+            linear-gradient(0deg, rgba(14, 29, 22, .78), transparent 85%);
+    }
+
+    .husky-hero-content {
+        padding-top: 145px;
+        padding-bottom: 110px;
+    }
+
+    .husky-hero h1 {
+        max-width: 560px;
+        font-size: clamp(2.7rem, 10vw, 4rem);
+    }
+
+    .husky-hero-copy {
+        max-width: 440px;
+        font-size: 15px;
+    }
+
+    .husky-hero-actions {
+        gap: 19px;
+    }
+
+    .husky-hero-note {
+        right: 20px;
+        bottom: 22px;
+        font-size: 10px;
+    }
+
+    .husky-scroll-cue {
+        display: none;
+    }
+
+    .husky-intro-grid,
+    .husky-services-grid,
+    .husky-contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 42px;
+    }
+
+    .husky-intro-photo {
+        height: 65vw;
+        min-height: 300px;
+        max-height: 470px;
+    }
+
+    .husky-values {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 22px;
+    }
+
+    .husky-value {
+        padding-right: 12px;
+    }
+
+    .husky-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .husky-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .husky-product-image {
+        height: clamp(140px, 32vw, 220px);
+    }
+
+    .husky-product-info {
+        min-height: 155px;
+        padding: 15px 13px 40px;
+    }
+
+    .husky-product-info h3 {
+        font-size: 16px;
+    }
+
+    .husky-product-info p {
+        font-size: 12px;
+    }
+
+    .husky-card-arrow {
+        left: 13px;
+    }
+
+    .husky-services {
+        padding: 76px 0;
+    }
+
+    .husky-services-grid {
+        gap: 38px;
+    }
+
+    .husky-services-intro h2 {
+        max-width: 560px;
+        font-size: clamp(2.3rem, 8vw, 3.5rem);
+    }
+
+    .husky-services-lead {
+        max-width: 560px;
+    }
+
+    .husky-services-caption {
+        margin-top: 35px;
+    }
+
+    .husky-service-item {
+        grid-template-columns: 29px minmax(0, 1fr) 27px;
+        gap: 12px;
+        padding: 22px 0;
+    }
+
+    .husky-service-content h3 {
+        font-size: 17px;
+    }
+
+    .husky-service-content p {
+        font-size: 13px;
+    }
+
+    .husky-project {
+        grid-template-columns: 1fr;
+    }
+
+    .husky-project-copy {
+        padding: 60px 20px;
+    }
+
+    .husky-project-image {
+        height: 58vw;
+        min-height: 280px;
+    }
+
+    .husky-contact-grid {
+        gap: 35px;
+    }
+
+    .husky-quote-form {
+        padding: 24px 18px;
+    }
+
+    .husky-footer-main {
+        flex-wrap: wrap;
+        padding-block: 28px;
+    }
+
+    .husky-footer-main nav {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 18px;
+    }
+
+    .husky-footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-block: 15px;
+        gap: 7px;
+    }
+
+    .husky-clients-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .husky-client-logo {
+        min-height: 100px;
+        padding: 16px;
+    }
+
+    .husky-applications-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .husky-application-item {
+        min-height: 76px;
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .husky-application-item p {
+        font-size: 12px;
+    }
+
+    .husky-products-note,
+    .husky-clients-note {
+        font-size: 11px;
+    }
+
+    .husky-whatsapp {
+        right: 18px;
+        bottom: 18px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .husky-whatsapp-tooltip {
+        display: none;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — MÓVILES PEQUEÑOS
+   ========================================================= */
+
+@media (max-width: 520px) {
+    .husky-reasons-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .husky-reason-card {
+        padding: 22px;
+    }
+
+    .husky-reason-number {
+        margin-bottom: 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .husky-hero {
+        min-height: 760px;
+    }
+
+    .husky-brand-logo,
+    .husky-brand-logo-white {
+        width: 135px;
+        height: 42px;
+    }
+
+    .husky-hero-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .husky-product-grid {
+        gap: 10px;
+    }
+
+    .husky-product-image {
+        height: 135px;
+    }
+
+    .husky-product-info h3 {
+        font-size: 15px;
+    }
+
+    .husky-product-info p {
+        font-size: 12px;
+    }
+
+    .husky-product-info {
+        min-height: 165px;
+    }
+
+    .husky-form-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .husky-back-top {
+        display: none;
+    }
+
+    .husky-clients-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .husky-client-logo {
+        min-height: 90px;
+        padding: 14px;
+    }
+
+    .husky-applications-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .husky-application-item {
+        min-height: 68px;
+    }
+
+    .husky-services::before {
+        right: -280px;
+    }
+
+    .husky-services::after {
+        right: -230px;
+    }
+
+    .husky-service-item {
+        grid-template-columns: 25px minmax(0, 1fr) 25px;
+        gap: 9px;
+    }
+
+    .husky-service-content h3 {
+        font-size: 16px;
+    }
+
+    .husky-service-content p {
+        font-size: 12px;
+        line-height: 1.75;
+    }
+
+    .husky-services-more {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .husky-footer-main nav {
+        gap: 14px;
+    }
+}
+
+/* =========================================================
+   ACCESIBILIDAD — MOVIMIENTO REDUCIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .husky-site *,
+    .husky-site *::before,
+    .husky-site *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+    .husky-intro-photo img,
+    .husky-product-image img,
+    .husky-project-image img {
+        transition: none;
+    }
+
+    .husky-client-logo,
+    .husky-whatsapp,
+    .husky-whatsapp-tooltip {
+        transition: none;
+    }
+}
+
+
+/* LOGOTIPOS DE CLIENTES */
+.husky-client-logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 112px;
+    padding: 22px;
+    overflow: hidden;
+    background: #fdfdfd;
+    border: 1px solid var(--husky-soft-line);
+    border-radius: 14px;
+
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+.husky-client-logo img {
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    height: 65px;
+    object-fit: contain;
+
+    filter: grayscale(100%);
+    opacity: 0.72;
+
+    transition:
+        filter 0.35s ease,
+        opacity 0.35s ease,
+        transform 0.35s ease;
+}
+
+.husky-client-placeholder {
+    display: none;
+}
+
+/* Al pasar el cursor, aparece el color original */
+.husky-client-logo:hover {
+    background: #fff;
+    border-color: rgba(0, 90, 37, 0.28);
+    box-shadow: 0 8px 22px rgba(34, 58, 45, 0.08);
+    transform: translateY(-3px);
+}
+
+.husky-client-logo:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.04);
+}
+
+/* Accesibilidad con teclado */
+.husky-client-logo:focus-within {
+    outline: 2px solid var(--husky-olive);
+    outline-offset: 3px;
+}
+
+/* En móviles, mostrar los logotipos a color */
+@media (hover: none) {
+    .husky-client-logo img {
+        filter: none;
+        opacity: 1;
+    }
+
+    .husky-client-logo:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .husky-client-logo,
+    .husky-client-logo img {
+        transition: none;
+    }
+
+    .husky-client-logo:hover {
+        transform: none;
+    }
+}
+
+
+/* =========================================
+   REDES SOCIALES EN CONTACTO
+   ========================================= */
+
+.husky-contact-social {
+    margin-top: 34px;
+    padding-top: 25px;
+    border-top: 1px solid var(--husky-soft-line);
+}
+
+.husky-contact-social-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 10px;
+}
+
+.husky-contact-social-heading p {
+    margin: 0;
+    color: var(--husky-olive);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+}
+
+.husky-contact-social-line {
+    width: 24px;
+    height: 1px;
+    background: var(--husky-olive);
+}
+
+.husky-contact-social h3 {
+    margin: 0;
+    color: var(--husky-forest);
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(19px, 2vw, 23px);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.035em;
+}
+
+.husky-contact-social-copy {
+    max-width: 430px;
+    margin: 10px 0 18px;
+    color: var(--husky-muted);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.husky-contact-social-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.husky-contact-social-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--husky-soft-line);
+    border-radius: 16px;
+    background: rgba(231, 233, 223, 0.48);
+    color: var(--husky-forest);
+    text-decoration: none;
+    transition:
+        transform 250ms ease,
+        background 250ms ease,
+        border-color 250ms ease;
+}
+
+.husky-contact-social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #FAF9F6;
+    color: #005A25;
+    transition: transform 250ms ease;
+}
+
+.husky-contact-social-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.husky-contact-social-info strong {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.husky-contact-social-info small {
+    color: var(--husky-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.husky-contact-social-arrow {
+    flex-shrink: 0;
+    color: var(--husky-muted);
+    transition: transform 250ms ease;
+}
+
+.husky-contact-social-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 90, 37, 0.25);
+    background: #E7E9DF;
+}
+
+.husky-contact-social-card:hover .husky-contact-social-icon {
+    transform: scale(1.06);
+}
+
+.husky-contact-social-card:hover .husky-contact-social-arrow {
+    transform: translate(2px, -2px);
+}
+
+.husky-contact-social-card:focus-visible,
+.husky-footer-social a:focus-visible {
+    outline: 2px solid #005A25;
+    outline-offset: 4px;
+}
+
+/* =========================================
+   REDES SOCIALES EN FOOTER
+   ========================================= */
+
+.husky-footer-social {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.husky-footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(216, 223, 208, 0.24);
+    border-radius: 50%;
+    background: rgba(231, 233, 223, 0.08);
+    color: #D8DFD0;
+    text-decoration: none;
+    transition:
+        transform 250ms ease,
+        color 250ms ease,
+        background 250ms ease,
+        border-color 250ms ease;
+}
+
+.husky-footer-social a:hover {
+    transform: translateY(-3px);
+    border-color: #D8DFD0;
+    background: #D8DFD0;
+    color: #005A25;
+}
+
+/* Accesibilidad: reducir animaciones cuando se solicita */
+@media (prefers-reduced-motion: reduce) {
+    .husky-contact-social-card,
+    .husky-contact-social-icon,
+    .husky-contact-social-arrow,
+    .husky-footer-social a {
+        transition: none;
+    }
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 600px) {
+    .husky-contact-social-links {
+        grid-template-columns: 1fr;
+    }
+
+    .husky-contact-social-card {
+        padding: 13px;
+    }
+}
+/* =========================================
+   CONTACTO: columnas independientes
+========================================= */
+
+.husky-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: clamp(2rem, 5vw, 5rem);
+}
+
+/* Evita que la columna izquierda fuerce
+   el ancho de la columna del formulario */
+.husky-contact-copy,
+.husky-quote-form {
+    min-width: 0;
+    align-self: start;
+}
+
+/* =========================================
+   FORMULARIO DE COTIZACIÓN
+========================================= */
+
+.husky-quote-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+
+    width: 100%;
+    height: fit-content;
+    min-height: 0;
+
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+
+    box-sizing: border-box;
+}
+
+/* Filas de dos campos */
+.husky-quote-form .husky-form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Campos */
+.husky-quote-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-width: 0;
+    width: 100%;
+}
+
+.husky-quote-form input,
+.husky-quote-form select,
+.husky-quote-form textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Evita que el textarea cambie el diseño */
+.husky-quote-form textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+/* Selector */
+.husky-quote-form .husky-select-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.husky-quote-form .husky-select-wrap select {
+    padding-right: 2.5rem;
+    appearance: none;
+}
+
+.husky-quote-form .husky-select-wrap > svg {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Botón siempre después de los campos */
+.husky-quote-form .husky-submit {
+    position: static;
+    align-self: stretch;
+    width: 100%;
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* Mensaje de confirmación */
+.husky-quote-form .husky-form-feedback {
+    margin: 0;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+    .husky-contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2.5rem;
+    }
+
+    .husky-contact-copy,
+    .husky-quote-form {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .husky-quote-form {
+        padding: 1.25rem;
+        gap: 1.1rem;
+    }
+
+    .husky-quote-form .husky-form-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

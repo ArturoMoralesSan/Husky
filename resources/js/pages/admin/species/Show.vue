@@ -1,0 +1,1057 @@
+<script setup lang="ts">
+import { Head, Link } from '@inertiajs/vue3';
+
+import {
+    ArrowLeft,
+    Edit,
+    ExternalLink,
+    Image,
+    Leaf,
+    MapPin,
+    Tags,
+} from 'lucide-vue-next';
+
+import MapMarkerMap from '@/components/admin/MapMarkerMap.vue';
+
+import admin from '@/routes/admin';
+
+interface SpeciesCategory {
+    id: number;
+    name: string;
+}
+
+interface SpeciesImage {
+    id: number;
+    type: 'main' | 'thumbnail' | 'gallery';
+    path: string;
+    alt_text?: string | null;
+    is_active: boolean;
+    sort_order: number;
+}
+
+interface MapImageBounds {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+}
+
+interface GeoJsonGeometry {
+    type: 'Polygon';
+    coordinates: number[][][];
+}
+
+interface ZooZone {
+    id: number;
+    name: string;
+    description?: string | null;
+    type?: string | null;
+    geometry?: GeoJsonGeometry | null;
+    map_image?: string | null;
+    map_image_bounds?: MapImageBounds | null;
+    is_active: boolean;
+}
+
+interface SpeciesLocation {
+    id: number;
+    name: string;
+    latitude: number;
+    longitude: number;
+    description?: string | null;
+    is_active: boolean;
+    zone?: ZooZone | null;
+}
+
+interface SpeciesTag {
+    id: number;
+    name: string;
+}
+
+interface Species {
+    id: number;
+    species_category_id: number;
+    common_name: string;
+    scientific_name?: string | null;
+    slug: string;
+    description?: string | null;
+    habitat?: string | null;
+    origin?: string | null;
+    diet?: string | null;
+    conservation_status?: string | null;
+    is_active: boolean;
+    category?: SpeciesCategory | null;
+    images: SpeciesImage[];
+    locations: SpeciesLocation[];
+    tags: SpeciesTag[];
+}
+
+const props = defineProps<{
+    species: Species;
+}>();
+
+/**
+ * --------------------------------------------------------------------------
+ * Imágenes
+ * --------------------------------------------------------------------------
+ */
+
+const mainImage =
+    props.species.images.find(
+        (image) =>
+            image.type === 'main' &&
+            image.is_active,
+    ) ?? null;
+
+const thumbnailImage =
+    props.species.images.find(
+        (image) =>
+            image.type === 'thumbnail' &&
+            image.is_active,
+    ) ?? null;
+
+const galleryImages =
+    props.species.images.filter(
+        (image) =>
+            image.type === 'gallery' &&
+            image.is_active,
+    );
+
+/**
+ * --------------------------------------------------------------------------
+ * Ubicación
+ * --------------------------------------------------------------------------
+ */
+
+const currentLocation =
+    props.species.locations[0] ?? null;
+
+/**
+ * --------------------------------------------------------------------------
+ * URLs
+ * --------------------------------------------------------------------------
+ */
+
+const imageUrl = (path: string) => {
+    return `/storage/${path}`;
+};
+
+const thumbnailMarkerUrl = thumbnailImage
+    ? imageUrl(thumbnailImage.path)
+    : null;
+</script>
+
+<template>
+    <Head
+        :title="`Detalles - ${species.common_name}`"
+    />
+
+    <div
+        class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+    >
+        <!-- ===================================================== -->
+        <!-- ENCABEZADO -->
+        <!-- ===================================================== -->
+
+        <div
+            class="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border"
+        >
+            <div
+                class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+            >
+                <div class="flex items-center gap-4">
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+                    >
+                        <Leaf class="h-5 w-5" />
+                    </div>
+
+                    <div>
+                        <h1 class="text-2xl font-semibold">
+                            Detalles de la especie
+                        </h1>
+
+                        <p
+                            class="mt-1 text-sm text-muted-foreground"
+                        >
+                            Información completa de
+                            {{ species.common_name }}.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="flex flex-col gap-2 sm:flex-row"
+                >
+                    <Link
+                        :href="admin.species.index().url"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg border border-sidebar-border px-4 py-2.5 text-sm font-medium transition hover:bg-accent"
+                    >
+                        <ArrowLeft class="h-4 w-4" />
+
+                        Volver
+                    </Link>
+
+                    <Link
+                        :href="
+                            admin.species.edit(
+                                species.id,
+                            ).url
+                        "
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+                    >
+                        <Edit class="h-4 w-4" />
+
+                        Editar
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- INFORMACIÓN GENERAL -->
+        <!-- ===================================================== -->
+
+        <div
+            class="relative rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border"
+        >
+            <div
+                class="grid gap-6 lg:grid-cols-3"
+            >
+                <!-- DATOS -->
+
+                <div class="lg:col-span-2">
+                    <div
+                        class="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border"
+                    >
+                        <div class="flex items-center gap-2">
+                            <Leaf
+                                class="h-4 w-4 text-primary"
+                            />
+
+                            <h2
+                                class="text-base font-semibold"
+                            >
+                                Información general
+                            </h2>
+                        </div>
+
+                        <p
+                            class="mt-1 text-sm text-muted-foreground"
+                        >
+                            Datos principales de la especie.
+                        </p>
+                    </div>
+
+                    <div
+                        class="mt-6 grid gap-5 sm:grid-cols-2"
+                    >
+                        <!-- Nombre común -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Nombre común
+                            </p>
+
+                            <p
+                                class="mt-1 text-sm font-medium"
+                            >
+                                {{ species.common_name }}
+                            </p>
+                        </div>
+
+                        <!-- Nombre científico -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Nombre científico
+                            </p>
+
+                            <p class="mt-1 text-sm italic">
+                                {{
+                                    species.scientific_name ||
+                                    'Sin especificar'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- Categoría -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Categoría
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{
+                                    species.category?.name ||
+                                    'Sin categoría'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- ID -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                ID
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{ species.id }}
+                            </p>
+                        </div>
+
+                        <!-- Slug -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Slug
+                            </p>
+
+                            <p
+                                class="mt-1 break-all text-sm"
+                            >
+                                {{ species.slug }}
+                            </p>
+                        </div>
+
+                        <!-- Hábitat -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Hábitat
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{
+                                    species.habitat ||
+                                    'Sin especificar'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- Origen -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Origen
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{
+                                    species.origin ||
+                                    'Sin especificar'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- Dieta -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Alimentación
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{
+                                    species.diet ||
+                                    'Sin especificar'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- Conservación -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Estado de conservación
+                            </p>
+
+                            <p class="mt-1 text-sm">
+                                {{
+                                    species.conservation_status ||
+                                    'Sin especificar'
+                                }}
+                            </p>
+                        </div>
+
+                        <!-- Estado -->
+
+                        <div>
+                            <p
+                                class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                            >
+                                Estado
+                            </p>
+
+                            <div class="mt-1">
+                                <span
+                                    v-if="species.is_active"
+                                    class="inline-flex rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-400"
+                                >
+                                    Activa
+                                </span>
+
+                                <span
+                                    v-else
+                                    class="inline-flex rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-600 dark:text-red-400"
+                                >
+                                    Inactiva
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <div
+                        v-if="species.description"
+                        class="mt-6 border-t border-sidebar-border/70 pt-6 dark:border-sidebar-border"
+                    >
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Descripción
+                        </p>
+
+                        <p
+                            class="mt-2 whitespace-pre-line text-sm leading-6"
+                        >
+                            {{ species.description }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- IMAGEN PRINCIPAL -->
+
+                <div>
+                    <div class="flex items-center gap-2">
+                        <Image
+                            class="h-4 w-4 text-primary"
+                        />
+
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Imagen principal
+                        </p>
+                    </div>
+
+                    <div
+                        class="mt-2 overflow-hidden rounded-xl border border-sidebar-border/70 bg-muted/20 dark:border-sidebar-border"
+                    >
+                        <img
+                            v-if="mainImage"
+                            :src="
+                                imageUrl(
+                                    mainImage.path,
+                                )
+                            "
+                            :alt="
+                                mainImage.alt_text ||
+                                species.common_name
+                            "
+                            class="aspect-square w-full object-cover"
+                        />
+
+                        <div
+                            v-else
+                            class="flex aspect-square items-center justify-center bg-muted text-sm text-muted-foreground"
+                        >
+                            Sin imagen principal
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- ETIQUETAS -->
+        <!-- ===================================================== -->
+
+        <div
+            class="relative rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border"
+        >
+            <div
+                class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
+            >
+                <div>
+                    <div class="flex items-center gap-2">
+                        <Tags
+                            class="h-4 w-4 text-primary"
+                        />
+
+                        <h2
+                            class="text-base font-semibold"
+                        >
+                            Etiquetas
+                        </h2>
+                    </div>
+
+                    <p
+                        class="mt-1 text-sm text-muted-foreground"
+                    >
+                        Etiquetas asociadas a esta especie.
+                    </p>
+                </div>
+
+                <span
+                    class="w-fit rounded-full border border-sidebar-border bg-muted/30 px-2.5 py-1 text-xs font-medium"
+                >
+                    {{ species.tags.length }}
+                    {{
+                        species.tags.length === 1
+                            ? 'etiqueta'
+                            : 'etiquetas'
+                    }}
+                </span>
+            </div>
+
+            <div
+                v-if="species.tags.length"
+                class="mt-5 flex flex-wrap gap-2"
+            >
+                <span
+                    v-for="tag in species.tags"
+                    :key="tag.id"
+                    class="rounded-full border border-sidebar-border bg-muted/20 px-2.5 py-1 text-xs font-medium transition hover:bg-accent"
+                >
+                    {{ tag.name }}
+                </span>
+            </div>
+
+            <p
+                v-else
+                class="mt-5 text-sm italic text-muted-foreground"
+            >
+                No hay etiquetas asociadas.
+            </p>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- IMÁGENES -->
+        <!-- ===================================================== -->
+
+        <div
+            class="relative rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border"
+        >
+            <div
+                class="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border"
+            >
+                <div class="flex items-center gap-2">
+                    <Image
+                        class="h-4 w-4 text-primary"
+                    />
+
+                    <h2
+                        class="text-base font-semibold"
+                    >
+                        Imágenes
+                    </h2>
+                </div>
+
+                <p
+                    class="mt-1 text-sm text-muted-foreground"
+                >
+                    Recursos gráficos registrados para esta especie.
+                </p>
+            </div>
+
+            <div
+                class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+                <!-- PRINCIPAL -->
+
+                <div>
+                    <p
+                        class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                        Principal
+                    </p>
+
+                    <div
+                        class="mt-2 overflow-hidden rounded-xl border border-sidebar-border/70 bg-muted/20 dark:border-sidebar-border"
+                    >
+                        <img
+                            v-if="mainImage"
+                            :src="
+                                imageUrl(
+                                    mainImage.path,
+                                )
+                            "
+                            :alt="
+                                mainImage.alt_text ||
+                                species.common_name
+                            "
+                            class="aspect-square w-full object-cover"
+                        />
+
+                        <div
+                            v-else
+                            class="flex aspect-square items-center justify-center bg-muted text-xs text-muted-foreground"
+                        >
+                            Sin imagen
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MINIATURA -->
+
+                <div>
+                    <p
+                        class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                        Miniatura
+                    </p>
+
+                    <div
+                        class="mt-2 overflow-hidden rounded-xl border border-sidebar-border/70 bg-muted/20 dark:border-sidebar-border"
+                    >
+                        <img
+                            v-if="thumbnailImage"
+                            :src="
+                                imageUrl(
+                                    thumbnailImage.path,
+                                )
+                            "
+                            :alt="
+                                thumbnailImage.alt_text ||
+                                species.common_name
+                            "
+                            class="aspect-square w-full object-cover"
+                        />
+
+                        <div
+                            v-else
+                            class="flex aspect-square items-center justify-center bg-muted text-xs text-muted-foreground"
+                        >
+                            Sin imagen
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GALERÍA -->
+
+                <div>
+                    <p
+                        class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                        Galería
+                    </p>
+
+                    <div
+                        v-if="galleryImages.length"
+                        class="mt-2 grid grid-cols-2 gap-2"
+                    >
+                        <div
+                            v-for="image in galleryImages.slice(
+                                0,
+                                4,
+                            )"
+                            :key="image.id"
+                            class="overflow-hidden rounded-lg border border-sidebar-border/70 bg-muted/20 dark:border-sidebar-border"
+                        >
+                            <img
+                                :src="
+                                    imageUrl(
+                                        image.path,
+                                    )
+                                "
+                                :alt="
+                                    image.alt_text ||
+                                    species.common_name
+                                "
+                                class="aspect-square w-full object-cover transition duration-300 hover:scale-105"
+                            />
+                        </div>
+                    </div>
+
+                    <div
+                        v-else
+                        class="mt-2 flex aspect-square items-center justify-center rounded-xl bg-muted text-xs text-muted-foreground"
+                    >
+                        Sin imágenes
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- UBICACIÓN -->
+        <!-- ===================================================== -->
+
+        <div
+            class="relative rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border"
+        >
+            <div
+                class="flex flex-col gap-3 border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border md:flex-row md:items-center md:justify-between"
+            >
+                <div>
+                    <div class="flex items-center gap-2">
+                        <MapPin
+                            class="h-4 w-4 text-primary"
+                        />
+
+                        <h2
+                            class="text-base font-semibold"
+                        >
+                            Ubicación
+                        </h2>
+                    </div>
+
+                    <p
+                        class="mt-1 text-sm text-muted-foreground"
+                    >
+                        Ubicación registrada dentro del zoológico.
+                    </p>
+                </div>
+
+                <span
+                    v-if="currentLocation?.zone"
+                    class="w-fit rounded-full border border-sidebar-border bg-muted/30 px-2.5 py-1 text-xs font-medium"
+                >
+                    {{ currentLocation.zone.name }}
+                </span>
+            </div>
+
+            <div
+                v-if="currentLocation"
+                class="mt-6 space-y-6"
+            >
+                <!-- ================================================= -->
+                <!-- INFORMACIÓN DE UBICACIÓN -->
+                <!-- ================================================= -->
+
+                <div
+                    class="grid gap-5 sm:grid-cols-2"
+                >
+                    <!-- ZONA -->
+
+                    <div
+                        class="rounded-xl border border-sidebar-border bg-muted/20 p-4 sm:col-span-2"
+                    >
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Zona del zoológico
+                        </p>
+
+                        <p
+                            v-if="currentLocation.zone"
+                            class="mt-1 text-base font-semibold"
+                        >
+                            {{
+                                currentLocation.zone.name
+                            }}
+                        </p>
+
+                        <p
+                            v-else
+                            class="mt-1 text-sm italic text-muted-foreground"
+                        >
+                            Sin zona asignada
+                        </p>
+
+                        <p
+                            v-if="currentLocation.zone?.type"
+                            class="mt-1 text-xs text-muted-foreground"
+                        >
+                            Tipo:
+                            {{
+                                currentLocation.zone.type
+                            }}
+                        </p>
+                    </div>
+
+                    <!-- Nombre -->
+
+                    <div>
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Nombre de la ubicación
+                        </p>
+
+                        <p
+                            class="mt-1 text-sm font-medium"
+                        >
+                            {{ currentLocation.name }}
+                        </p>
+                    </div>
+
+                    <!-- Estado -->
+
+                    <div>
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Estado
+                        </p>
+
+                        <div class="mt-1">
+                            <span
+                                v-if="
+                                    currentLocation.is_active
+                                "
+                                class="inline-flex rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-400"
+                            >
+                                Activa
+                            </span>
+
+                            <span
+                                v-else
+                                class="inline-flex rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-600 dark:text-red-400"
+                            >
+                                Inactiva
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Latitud -->
+
+                    <div>
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Latitud
+                        </p>
+
+                        <p class="mt-1 text-sm">
+                            {{ currentLocation.latitude }}
+                        </p>
+                    </div>
+
+                    <!-- Longitud -->
+
+                    <div>
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Longitud
+                        </p>
+
+                        <p class="mt-1 text-sm">
+                            {{ currentLocation.longitude }}
+                        </p>
+                    </div>
+
+                    <!-- Descripción -->
+
+                    <div
+                        v-if="currentLocation.description"
+                        class="sm:col-span-2"
+                    >
+                        <p
+                            class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                        >
+                            Descripción
+                        </p>
+
+                        <p
+                            class="mt-1 whitespace-pre-line text-sm leading-6"
+                        >
+                            {{
+                                currentLocation.description
+                            }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ================================================= -->
+                <!-- MAPA / PLANO -->
+                <!-- ================================================= -->
+
+                <div
+                    class="border-t border-sidebar-border/70 pt-6 dark:border-sidebar-border"
+                >
+                    <div>
+                        <h3
+                            class="text-sm font-semibold"
+                        >
+                            Ubicación en el plano
+                        </h3>
+
+                        <p
+                            class="mt-1 text-xs text-muted-foreground"
+                        >
+                            Posición registrada de la especie
+                            dentro de la zona del zoológico.
+                        </p>
+                    </div>
+
+                    <div
+                        v-if="currentLocation.zone?.geometry"
+                        class="mt-4 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+                    >
+                        <MapMarkerMap
+                            :geometry="
+                                currentLocation.zone.geometry
+                            "
+                            :map-image="
+                                currentLocation.zone.map_image ??
+                                null
+                            "
+                            :map-image-bounds="
+                                currentLocation.zone
+                                    .map_image_bounds ?? null
+                            "
+                            :marker-image="
+                                thumbnailMarkerUrl
+                            "
+                            :latitude="
+                                currentLocation.latitude
+                            "
+                            :longitude="
+                                currentLocation.longitude
+                            "
+                            :readonly="true"
+                        />
+                    </div>
+
+                    <div
+                        v-else
+                        class="mt-4 rounded-xl border border-dashed border-sidebar-border p-6 text-center"
+                    >
+                        <MapPin
+                            class="mx-auto h-6 w-6 text-muted-foreground"
+                        />
+
+                        <p
+                            class="mt-2 text-sm text-muted-foreground"
+                        >
+                            La zona de esta especie no tiene
+                            un área definida en el mapa.
+                        </p>
+                    </div>
+
+                    <p
+                        v-if="
+                            currentLocation.zone &&
+                            !currentLocation.zone.map_image
+                        "
+                        class="mt-2 text-xs text-amber-600 dark:text-amber-400"
+                    >
+                        Esta zona no tiene un plano configurado.
+                        La ubicación se muestra sobre el mapa
+                        utilizando el área geográfica de la zona.
+                    </p>
+
+                    <div
+                        v-if="thumbnailMarkerUrl"
+                        class="mt-4 flex items-center gap-3 rounded-xl border border-sidebar-border bg-muted/20 p-4"
+                    >
+                        <div
+                            class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-background shadow-sm"
+                        >
+                            <img
+                                :src="thumbnailMarkerUrl"
+                                :alt="
+                                    `Miniatura de ${species.common_name}`
+                                "
+                                class="h-full w-full object-cover"
+                            />
+                        </div>
+
+                        <div>
+                            <p
+                                class="text-sm font-medium"
+                            >
+                                Miniatura utilizada en el mapa
+                            </p>
+
+                            <p
+                                class="mt-1 text-xs text-muted-foreground"
+                            >
+                                Esta imagen se muestra como
+                                marcador de la especie.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================= -->
+                <!-- GOOGLE MAPS -->
+                <!-- ================================================= -->
+
+                <div
+                    class="border-t border-sidebar-border/70 pt-6 dark:border-sidebar-border"
+                >
+                    <a
+                        :href="`https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg border border-sidebar-border px-4 py-2.5 text-sm font-medium transition hover:bg-accent"
+                    >
+                        <ExternalLink class="h-4 w-4" />
+
+                        Ver en Google Maps
+                    </a>
+                </div>
+            </div>
+
+            <div
+                v-else
+                class="mt-6 rounded-xl border border-dashed border-sidebar-border p-6 text-center"
+            >
+                <MapPin
+                    class="mx-auto h-6 w-6 text-muted-foreground"
+                />
+
+                <p
+                    class="mt-2 text-sm text-muted-foreground"
+                >
+                    No hay una ubicación registrada
+                    para esta especie.
+                </p>
+            </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- ACCIONES -->
+        <!-- ===================================================== -->
+
+        <div
+            class="flex flex-col gap-3 rounded-xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border sm:flex-row sm:items-center sm:justify-between"
+        >
+            <Link
+                :href="admin.species.index().url"
+                class="inline-flex items-center justify-center gap-2 rounded-lg border border-sidebar-border px-4 py-2.5 text-sm font-medium transition hover:bg-accent"
+            >
+                <ArrowLeft class="h-4 w-4" />
+
+                Volver al listado
+            </Link>
+
+            <Link
+                :href="
+                    admin.species.edit(
+                        species.id,
+                    ).url
+                "
+                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            >
+                <Edit class="h-4 w-4" />
+
+                Editar especie
+            </Link>
+        </div>
+    </div>
+</template>
