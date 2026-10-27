@@ -1,19 +1,35 @@
-
 /* =========================================================
-   ZOOAPP
+   INDUSTRIAS HUSKY
    ADMIN CONTENT / SIDEBAR INSET
    Laravel + Inertia + Vue 3 + Tailwind
    ========================================================= */
 
-:root {
-    --zoo-content-bg: #F2F7F4;
-    --zoo-content-surface: #ffffff;
-    --zoo-content-border: #e3ebe5;
+/* Tipografía del landing */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
-    --zoo-content-text: #244334;
-    --zoo-content-muted: #84958a;
+:root {
+    --zoo-content-bg: #f9f8f6;
+    --zoo-content-surface: #ffffff;
+    --zoo-content-border: rgba(0, 90, 37, 0.15);
+
+    --zoo-content-text: #293a30;
+    --zoo-content-muted: #69766b;
 
     --zoo-content-radius: 14px;
+
+    /* Paleta de Industrias Husky */
+    --husky-forest: #34463a;
+    --husky-forest-deep: #223a2d;
+    --husky-burgundy: #741203;
+    --husky-olive: #005a25;
+    --husky-sage: #e7e9df;
+    --husky-linen: #f1eee8;
+    --husky-paper: #f9f8f6;
+    --husky-ink: #293a30;
+    --husky-muted: #69766b;
+    --husky-line: rgba(0, 90, 37, 0.15);
+    --husky-soft-line: rgba(0, 90, 37, 0.09);
+    --husky-accent: #d8dfd0;
 }
 
 /* =========================================================
@@ -34,12 +50,13 @@
     background: var(--zoo-content-bg);
     color: var(--zoo-content-text);
 
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-family: 'DM Sans', sans-serif;
 
     transition:
         background-color 180ms ease,
         margin 200ms ease;
-    margin:0;
+
+    margin: 0;
     border-radius: 0;
 }
 
@@ -51,8 +68,15 @@
     min-width: 0;
 }
 
-/* Evitar que tablas, formularios y tarjetas desborden */
+/* Tipografía del contenido */
+[data-slot="sidebar-inset"],
+[data-slot="sidebar-inset"] *,
+main.mx-auto.flex.h-full.w-full.max-w-7xl,
+main.mx-auto.flex.h-full.w-full.max-w-7xl * {
+    font-family: 'DM Sans', sans-serif;
+}
 
+/* Evitar que tablas, formularios y tarjetas desborden */
 [data-slot="sidebar-inset"] img,
 [data-slot="sidebar-inset"] video,
 [data-slot="sidebar-inset"] canvas {
@@ -72,8 +96,10 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl {
 
     padding: 24px;
 
+    background-color: var(--zoo-content-bg);
     color: var(--zoo-content-text);
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+
+    font-family: 'DM Sans', sans-serif;
 }
 
 /* =========================================================
@@ -83,7 +109,8 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl {
 [data-slot="sidebar-inset"] h1,
 main.mx-auto.flex.h-full.w-full.max-w-7xl h1 {
     color: var(--zoo-content-text);
-    font-weight: 750;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 1.2;
 }
@@ -91,14 +118,14 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl h1 {
 [data-slot="sidebar-inset"] h2,
 main.mx-auto.flex.h-full.w-full.max-w-7xl h2 {
     color: var(--zoo-content-text);
+    font-family: 'Manrope', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
 /* =========================================================
    SUPERFICIES
-   Tarjetas, paneles y bloques con fondo blanco explícito.
-   No altera sus dimensiones ni su estructura.
+   Tarjetas, paneles y bloques.
    ========================================================= */
 
 [data-slot="sidebar-inset"] .bg-card,
@@ -117,15 +144,62 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl input,
 main.mx-auto.flex.h-full.w-full.max-w-7xl select,
 main.mx-auto.flex.h-full.w-full.max-w-7xl textarea {
     max-width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--husky-ink);
+    background-color: #ffffff;
+    border-color: var(--husky-line);
+    border-radius: 10px;
+    transition:
+        border-color 250ms ease,
+        box-shadow 250ms ease,
+        background-color 250ms ease;
 }
 
-[data-slot="sidebar-inset"] input:focus-visible,
-[data-slot="sidebar-inset"] select:focus-visible,
-[data-slot="sidebar-inset"] textarea:focus-visible,
-main.mx-auto.flex.h-full.w-full.max-w-7xl input:focus-visible,
-main.mx-auto.flex.h-full.w-full.max-w-7xl select:focus-visible,
-main.mx-auto.flex.h-full.w-full.max-w-7xl textarea:focus-visible {
-    outline-color: #75ad89;
+/* Placeholder */
+[data-slot="sidebar-inset"] input::placeholder,
+[data-slot="sidebar-inset"] textarea::placeholder,
+main.mx-auto.flex.h-full.w-full.max-w-7xl input::placeholder,
+main.mx-auto.flex.h-full.w-full.max-w-7xl textarea::placeholder {
+    color: var(--husky-muted);
+    opacity: 1;
+}
+
+/* Hover */
+[data-slot="sidebar-inset"] input:hover:not(:focus):not(:disabled),
+[data-slot="sidebar-inset"] select:hover:not(:focus):not(:disabled),
+[data-slot="sidebar-inset"] textarea:hover:not(:focus):not(:disabled),
+main.mx-auto.flex.h-full.w-full.max-w-7xl input:hover:not(:focus):not(:disabled),
+main.mx-auto.flex.h-full.w-full.max-w-7xl select:hover:not(:focus):not(:disabled),
+main.mx-auto.flex.h-full.w-full.max-w-7xl textarea:hover:not(:focus):not(:disabled) {
+    border-color: rgba(0, 90, 37, 0.35);
+}
+
+/* Foco */
+[data-slot="sidebar-inset"] input:focus,
+[data-slot="sidebar-inset"] select:focus,
+[data-slot="sidebar-inset"] textarea:focus,
+main.mx-auto.flex.h-full.w-full.max-w-7xl input:focus,
+main.mx-auto.flex.h-full.w-full.max-w-7xl select:focus,
+main.mx-auto.flex.h-full.w-full.max-w-7xl textarea:focus {
+    border-color: var(--husky-olive);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 90, 37, 0.1);
+    background-color: #ffffff;
+}
+
+
+
+/* Campos deshabilitados */
+[data-slot="sidebar-inset"] input:disabled,
+[data-slot="sidebar-inset"] select:disabled,
+[data-slot="sidebar-inset"] textarea:disabled,
+main.mx-auto.flex.h-full.w-full.max-w-7xl input:disabled,
+main.mx-auto.flex.h-full.w-full.max-w-7xl select:disabled,
+main.mx-auto.flex.h-full.w-full.max-w-7xl textarea:disabled {
+    background-color: var(--husky-linen);
+    color: var(--husky-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 /* =========================================================
@@ -144,8 +218,8 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl table {
 
 [data-slot="sidebar-inset"] th,
 main.mx-auto.flex.h-full.w-full.max-w-7xl th {
-    color: #627568;
-    font-weight: 650;
+    color: var(--zoo-content-muted);
+    font-weight: 600;
 }
 
 /* =========================================================
@@ -193,7 +267,6 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl a {
     }
 
     /* Mantener tablas utilizables en pantallas pequeñas */
-
     [data-slot="sidebar-inset"] table,
     main.mx-auto.flex.h-full.w-full.max-w-7xl table {
         white-space: nowrap;
@@ -210,7 +283,10 @@ main.mx-auto.flex.h-full.w-full.max-w-7xl a {
     }
 }
 
-/* Header blanco */
+/* =========================================================
+   HEADER BLANCO
+   ========================================================= */
+
 [data-slot="sidebar-inset"] header {
-    background-color: #fff !important;
+    background-color: #ffffff !important;
 }

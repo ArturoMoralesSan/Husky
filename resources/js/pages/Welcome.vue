@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import {
     ArrowDown,
     ArrowRight,
@@ -17,6 +16,7 @@ import {
     TreeDeciduous,
     X,
 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 import '../../css/husky-landing.css';
 
@@ -182,7 +182,9 @@ function chooseProduct(product: string) {
 function submitQuote() {
     const form = document.querySelector<HTMLFormElement>('#husky-quote-form');
 
-    if (!form || !form.reportValidity()) return;
+    if (!form || !form.reportValidity()) {
+return;
+}
 
     const data = new FormData(form);
 

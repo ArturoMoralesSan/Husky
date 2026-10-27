@@ -7,9 +7,9 @@ const name = usePage().props.name;
 <template>
     <div class="flex w-full items-center justify-center">
         <img
-            src="/images/sonrie-corriendo.png"
-            alt="Zoo"
-            class="h-auto w-[175px] object-contain"
+            src="/images/husky_blanco.webp"
+            alt="Industrias Husky"
+            class="h-auto w-[129px] object-contain"
         />
     </div>
 </template>

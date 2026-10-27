@@ -27,25 +27,31 @@ withDefaults(
         :type="type"
         :disabled="disabled || loading"
         :class="[
-            'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border-b-[3px] px-4 py-2.5 text-sm font-semibold transition-colors duration-200',
-            'focus:outline-none focus:ring-2 focus:ring-offset-2',
+            'inline-flex min-h-12 items-center justify-center gap-[15px] rounded-full border px-[23px] py-0 text-[13px] font-semibold',
+            'font-[DM_Sans,sans-serif]',
+            'transition-colors duration-[250ms] ease-in-out',
+            'motion-reduce:transition-none',
+            'focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#b6c79a] focus-visible:outline-offset-2',
             'disabled:cursor-not-allowed disabled:opacity-50',
             block ? 'w-full' : '',
+
             variant === 'primary'
-                ? 'border-b-[#092f1a] bg-[#187642] text-white hover:bg-[#126236] focus:ring-[#187642]/20'
+                ? 'border-[#34463A] bg-[#34463A] text-white hover:border-[#741203] hover:bg-[#741203]'
                 : '',
+
             variant === 'secondary'
-                ? 'border-b-[#c8d8ce] bg-white text-[#244334] hover:bg-[#f2f7f4] focus:ring-[#187642]/20'
+                ? 'border-[rgba(0,90,37,0.25)] bg-transparent text-[#34463A] hover:border-[#741203] hover:bg-[#741203] hover:text-white'
                 : '',
+
             variant === 'danger'
-                ? 'border-b-[#7f1d1d] bg-[#b91c1c] text-white hover:bg-[#991b1b] focus:ring-red-500/20'
+                ? 'border-[#741203] bg-[#741203] text-white hover:border-[#5A0E02] hover:bg-[#5A0E02]'
                 : '',
         ]"
     >
         <!-- Indicador de carga -->
         <svg
             v-if="loading"
-            class="h-4 w-4 animate-spin"
+            class="h-4 w-4 shrink-0 animate-spin motion-reduce:animate-none"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -67,7 +73,7 @@ withDefaults(
             />
         </svg>
 
-        <!-- Icono normal -->
+        <!-- Icono -->
         <component
             :is="icon"
             v-else-if="icon"
@@ -79,8 +85,11 @@ withDefaults(
 
         <!-- Texto -->
         <span>
-            {{ loading && loadingText ? loadingText : $slots.default ? '' : '' }}
-            <slot v-if="!loading || !loadingText" />
+            <template v-if="loading && loadingText">
+                {{ loadingText }}
+            </template>
+
+            <slot v-else />
         </span>
     </button>
 </template>

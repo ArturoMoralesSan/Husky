@@ -5,12 +5,6 @@ import {
     Link,
     usePage,
 } from '@inertiajs/vue3';
-import QRCode from 'qrcode';
-import {
-    computed,
-    onMounted,
-    ref,
-} from 'vue';
 import {
     ArrowLeft,
     Award,
@@ -29,15 +23,21 @@ import {
     Star,
     UserRound,
 } from 'lucide-vue-next';
+import QRCode from 'qrcode';
+import {
+    computed,
+    onMounted,
+    ref,
+} from 'vue';
 
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/DeleteUser.vue';
-import InputError from '@/components/InputError.vue';
 
 import ActiveSwitch from '@/components/admin/ActiveSwitch.vue';
 import AdminButton from '@/components/admin/AdminButton.vue';
 import AdminCard from '@/components/admin/AdminCard.vue';
 import PageHeader from '@/components/admin/PageHeader.vue';
+import DeleteUser from '@/components/DeleteUser.vue';
+import InputError from '@/components/InputError.vue';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -124,6 +124,7 @@ const userQrCode = ref<string | null>(null);
 const generateUserQrCode = async (): Promise<void> => {
     if (!user.value.qr_token) {
         console.warn('El usuario no tiene qr_token.');
+
         return;
     }
 
@@ -158,6 +159,7 @@ const handleAvatarChange = (event: Event): void => {
 
     if (!target.files || !target.files[0]) {
         avatarPreview.value = null;
+
         return;
     }
 

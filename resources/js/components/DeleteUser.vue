@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import { useTemplateRef } from 'vue';
 import {
     AlertTriangle,
     ShieldAlert,
     Trash2,
 } from 'lucide-vue-next';
+import { useTemplateRef } from 'vue';
 
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import AdminButton from '@/components/admin/AdminButton.vue';
+import AdminCard from '@/components/admin/AdminCard.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 
-import AdminCard from '@/components/admin/AdminCard.vue';
-import AdminButton from '@/components/admin/AdminButton.vue';
 
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -26,7 +27,6 @@ import {
 } from '@/components/ui/dialog';
 
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 
 const passwordInput = useTemplateRef('passwordInput');
 </script>

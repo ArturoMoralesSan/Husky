@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -59,27 +56,5 @@ class User extends Authenticatable implements PasskeyUser
 
             $user->qr_token = $token;
         });
-    }
-
-    public function level(): BelongsTo
-    {
-        return $this->belongsTo(Level::class);
-    }
-
-    public function profile(): HasOne
-    {
-        return $this->hasOne(Profile::class);
-    }
-
-    public function pointMovements(): HasMany
-    {
-        return $this->hasMany(PointMovement::class);
-    }
-
-    public function rewardRedemptions(): HasMany
-    {
-        return $this->hasMany(
-            RewardRedemption::class
-        );
     }
 }

@@ -9,6 +9,9 @@ import {
 } from 'lucide-vue-next';
 
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
+import AdminButton from '@/components/admin/AdminButton.vue';
+import AdminCard from '@/components/admin/AdminCard.vue';
+import PageHeader from '@/components/admin/PageHeader.vue';
 import InputError from '@/components/InputError.vue';
 import type { Props as ManagePasskeysProps } from '@/components/ManagePasskeys.vue';
 import ManagePasskeys from '@/components/ManagePasskeys.vue';
@@ -16,9 +19,6 @@ import type { Props as ManageTwoFactorProps } from '@/components/ManageTwoFactor
 import ManageTwoFactor from '@/components/ManageTwoFactor.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 
-import AdminButton from '@/components/admin/AdminButton.vue';
-import AdminCard from '@/components/admin/AdminCard.vue';
-import PageHeader from '@/components/admin/PageHeader.vue';
 
 import { edit } from '@/routes/security';
 

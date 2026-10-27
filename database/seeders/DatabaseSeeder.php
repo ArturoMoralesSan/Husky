@@ -18,14 +18,6 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             MenuSeeder::class,
             UserSeeder::class,
-            LevelSeeder::class,
-            SpeciesCategorySeeder::class,
-            SpeciesTagSeeder::class,
-            SpeciesSeeder::class,
-            PaymentMethodSeeder::class,
-            TicketTypeSeeder::class,
-            PointRuleSeeder::class,
-            RewardSeeder::class,
         ]);
     }
 }

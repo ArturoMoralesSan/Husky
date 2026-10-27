@@ -4,8 +4,8 @@ import { Head, router } from '@inertiajs/vue3';
 import { FilterX, Plus, Users } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
-import PageHeader from '@/components/admin/PageHeader.vue';
 import DataTable from '@/components/admin/DataTable.vue';
+import PageHeader from '@/components/admin/PageHeader.vue';
 import TableActions from '@/components/admin/TableActions.vue';
 import admin from '@/routes/admin';
 

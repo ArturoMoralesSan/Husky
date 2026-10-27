@@ -10,10 +10,10 @@ import {
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
 
-import admin from '@/routes/admin';
-import PageHeader from '@/components/admin/PageHeader.vue';
 import DataTable from '@/components/admin/DataTable.vue';
+import PageHeader from '@/components/admin/PageHeader.vue';
 import TableActions from '@/components/admin/TableActions.vue';
+import admin from '@/routes/admin';
 
 interface Permission {
     id: number;

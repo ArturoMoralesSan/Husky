@@ -8,34 +8,31 @@ import {
     Trash2,
 } from 'lucide-vue-next';
 
-interface ActionLink {
-    url: string;
-    title?: string;
-    label?: string;
-}
-
-withDefaults(defineProps<{
-    viewUrl?: string;
-    editUrl?: string;
-    questionsUrl?: string;
-    deleteTitle?: string;
-    deleteLabel?: string;
-    itemName?: string;
-    showView?: boolean;
-    showEdit?: boolean;
-    showQuestions?: boolean;
-    showDelete?: boolean;
-    loading?: boolean;
-}>(), {
-    showView: true,
-    showEdit: true,
-    showQuestions: false,
-    showDelete: true,
-    deleteTitle: '',
-    deleteLabel: 'Eliminar',
-    itemName: 'registro',
-    loading: false,
-});
+withDefaults(
+    defineProps<{
+        viewUrl?: string;
+        editUrl?: string;
+        questionsUrl?: string;
+        deleteTitle?: string;
+        deleteLabel?: string;
+        itemName?: string;
+        showView?: boolean;
+        showEdit?: boolean;
+        showQuestions?: boolean;
+        showDelete?: boolean;
+        loading?: boolean;
+    }>(),
+    {
+        showView: true,
+        showEdit: true,
+        showQuestions: false,
+        showDelete: true,
+        deleteTitle: '',
+        deleteLabel: 'Eliminar',
+        itemName: 'registro',
+        loading: false,
+    },
+);
 
 const emit = defineEmits<{
     delete: [];
@@ -45,7 +42,7 @@ const emit = defineEmits<{
 <template>
     <td class="px-5 py-4 sm:px-6">
         <div
-            class="flex min-w-[220px] items-center justify-end gap-1.5"
+            class="flex min-w-[220px] items-center justify-end gap-1.5 font-['DM_Sans',sans-serif]"
         >
             <!-- Administrar preguntas -->
             <Link
@@ -53,10 +50,10 @@ const emit = defineEmits<{
                 :href="questionsUrl"
                 title="Administrar preguntas"
                 aria-label="Administrar preguntas"
-                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-[#52685a] transition hover:bg-[#e4f2e8] hover:text-[#187744] focus:outline-none focus:ring-2 focus:ring-[#187744]/15"
+                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-[#69766B] transition-colors duration-[250ms] ease-in-out hover:bg-[#E7E9DF] hover:text-[#005A25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#005A25] focus-visible:outline-offset-2 motion-reduce:transition-none"
             >
-                <HelpCircle :size="16" />
-                Preguntas
+                <HelpCircle :size="16" :stroke-width="1.8" />
+                <span>Preguntas</span>
             </Link>
 
             <!-- Ver -->
@@ -65,9 +62,9 @@ const emit = defineEmits<{
                 :href="viewUrl"
                 :title="`Ver ${itemName}`"
                 :aria-label="`Ver ${itemName}`"
-                class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#187744] transition hover:bg-[#e4f2e8] focus:outline-none focus:ring-2 focus:ring-[#187744]/15"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#005A25] transition-colors duration-[250ms] ease-in-out hover:bg-[#E7E9DF] hover:text-[#34463A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#005A25] focus-visible:outline-offset-2 motion-reduce:transition-none"
             >
-                <Eye :size="17" />
+                <Eye :size="17" :stroke-width="1.8" />
             </Link>
 
             <!-- Editar -->
@@ -76,24 +73,24 @@ const emit = defineEmits<{
                 :href="editUrl"
                 :title="`Editar ${itemName}`"
                 :aria-label="`Editar ${itemName}`"
-                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#b9cfc0] bg-white px-3 text-xs font-semibold text-[#244334] transition hover:bg-[#edf4ef] focus:outline-none focus:ring-2 focus:ring-[#187744]/15"
+                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-[rgba(0,90,37,0.25)] bg-white px-3 text-xs font-semibold text-[#34463A] transition-colors duration-[250ms] ease-in-out hover:border-[#34463A] hover:bg-[#34463A] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#005A25] focus-visible:outline-offset-2 motion-reduce:transition-none"
             >
-                <Pencil :size="15" />
-                Editar
+                <Pencil :size="15" :stroke-width="1.8" />
+                <span>Editar</span>
             </Link>
 
             <!-- Eliminar -->
             <button
                 v-if="showDelete"
                 type="button"
-                :title="`Eliminar ${itemName}`"
-                :aria-label="`Eliminar ${itemName}`"
+                :title="deleteTitle || `Eliminar ${itemName}`"
+                :aria-label="deleteTitle || `Eliminar ${itemName}`"
                 :disabled="loading"
-                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-[#dfb9b9] bg-white px-3 text-xs font-semibold text-[#a33d3d] transition hover:bg-[#fff2f2] focus:outline-none focus:ring-2 focus:ring-red-500/15 disabled:cursor-not-allowed disabled:opacity-50"
+                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-[rgba(116,18,3,0.25)] bg-white px-3 text-xs font-semibold text-[#741203] transition-colors duration-[250ms] ease-in-out hover:border-[#741203] hover:bg-[#741203] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#741203] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
                 @click="emit('delete')"
             >
-                <Trash2 :size="15" />
-                {{ deleteLabel }}
+                <Trash2 :size="15" :stroke-width="1.8" />
+                <span>{{ deleteLabel }}</span>
             </button>
         </div>
     </td>

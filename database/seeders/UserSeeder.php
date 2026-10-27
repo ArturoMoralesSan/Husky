@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
-        | Obtener / crear roles
+        | Obtener / crear roles administrativos
         |--------------------------------------------------------------------------
         */
 
@@ -23,75 +23,53 @@ class UserSeeder extends Seeder
             'guard_name' => 'web',
         ]);
 
-        $staff = Role::firstOrCreate([
-            'name' => 'staff',
-            'guard_name' => 'web',
-        ]);
-
-        $visitor = Role::firstOrCreate([
-            'name' => 'visitor',
+        $admin = Role::firstOrCreate([
+            'name' => 'admin',
             'guard_name' => 'web',
         ]);
 
         /*
         |--------------------------------------------------------------------------
-        | ADMIN
+        | Super administrador
         |--------------------------------------------------------------------------
         */
 
-        $adminUser = User::updateOrCreate(
+        $superadminUser = User::updateOrCreate(
             [
                 'email' => 'ramon.morales41@gmail.com',
             ],
             [
-                'name' => 'Super Administrador',
+                'name' => 'Ramón Morales',
                 'password' => Hash::make('12345678'),
+            ]
+        );
+
+        $this->ensureQrToken($superadminUser);
+
+        $superadminUser->syncRoles([$superadmin]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Administrador
+        |--------------------------------------------------------------------------
+        |
+        | Cambia el nombre, correo y contraseña por los datos definitivos.
+        |
+        */
+
+        $adminUser = User::updateOrCreate(
+            [
+                'email' => 'admin@industriashusky.com.mx',
+            ],
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('Admin12345'),
             ]
         );
 
         $this->ensureQrToken($adminUser);
 
-        $adminUser->syncRoles([$superadmin]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | STAFF
-        |--------------------------------------------------------------------------
-        */
-
-        $staffUser = User::updateOrCreate(
-            [
-                'email' => 'staff@zooapp.com',
-            ],
-            [
-                'name' => 'Personal Zoo',
-                'password' => Hash::make('Staff12345'),
-            ]
-        );
-
-        $this->ensureQrToken($staffUser);
-
-        $staffUser->syncRoles([$staff]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | VISITOR
-        |--------------------------------------------------------------------------
-        */
-
-        $visitorUser = User::updateOrCreate(
-            [
-                'email' => 'visitor@zooapp.com',
-            ],
-            [
-                'name' => 'Visitante',
-                'password' => Hash::make('Visitor12345'),
-            ]
-        );
-
-        $this->ensureQrToken($visitorUser);
-
-        $visitorUser->syncRoles([$visitor]);
+        $adminUser->syncRoles([$admin]);
     }
 
     /*

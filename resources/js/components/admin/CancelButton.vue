@@ -19,8 +19,13 @@ withDefaults(
 <template>
     <Link
         :href="href"
-        class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#DCE7DF] border-b-[3px] border-b-[#c8d8ce] bg-white px-4 py-2.5 text-sm font-semibold text-[#244334] transition-colors duration-200 hover:bg-[#f2f7f4] focus:outline-none focus:ring-2 focus:ring-[#187642]/20 focus:ring-offset-2"
-        :class="block ? 'w-full' : ''"
+        :class="[
+            'inline-flex min-h-12 items-center justify-center gap-[15px] rounded-full border border-[rgba(0,90,37,0.25)] bg-transparent px-[23px] py-0 font-[DM_Sans,sans-serif] text-[13px] font-semibold text-[#34463A]',
+            'transition-colors duration-[250ms] ease-in-out motion-reduce:transition-none',
+            'hover:border-[#741203] hover:bg-[#741203] hover:text-white',
+            'focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#b6c79a] focus-visible:outline-offset-2',
+            block ? 'w-full' : '',
+        ]"
     >
         <component
             :is="icon"

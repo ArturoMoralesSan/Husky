@@ -1,23 +1,27 @@
+
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
 import type { Component } from 'vue';
 
-withDefaults(defineProps<{
-    title: string;
-    description?: string;
-    section?: string;
-    icon?: Component;
-    actionIcon?: Component;
-    actionLabel?: string;
-    actionHref?: string;
-}>(), {
-    description: '',
-    section: '',
-    actionIcon: () => Plus,
-    actionLabel: '',
-    actionHref: '',
-});
+withDefaults(
+    defineProps<{
+        title: string;
+        description?: string;
+        section?: string;
+        icon?: Component;
+        actionIcon?: Component;
+        actionLabel?: string;
+        actionHref?: string;
+    }>(),
+    {
+        description: '',
+        section: '',
+        actionIcon: () => Plus,
+        actionLabel: '',
+        actionHref: '',
+    },
+);
 
 const emit = defineEmits<{
     action: [];
@@ -26,30 +30,35 @@ const emit = defineEmits<{
 
 <template>
     <header
-        class="rounded-xl border border-[#d7e2da] bg-white px-4 py-4 sm:px-5 sm:py-4"
+        class="rounded-2xl border border-[rgba(0,90,37,0.15)] bg-white px-4 py-4 font-['DM_Sans',sans-serif] sm:px-5"
     >
         <div
-            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
             <!-- Título, icono y descripción -->
             <div class="flex min-w-0 items-start gap-3">
                 <div
                     v-if="icon"
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#edf4ef] text-[#187642]"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E7E9DF] text-[#005A25]"
                 >
-                    <component :is="icon" :size="21" :stroke-width="1.8" />
+                    <component
+                        :is="icon"
+                        :size="21"
+                        :stroke-width="1.8"
+                        aria-hidden="true"
+                    />
                 </div>
 
                 <div class="min-w-0">
                     <h1
-                        class="text-xl font-bold leading-tight tracking-tight text-[#17452d] sm:text-[21px]"
+                        class="font-['Manrope',sans-serif] text-xl font-bold leading-tight tracking-tight text-[#293A30] sm:text-[21px]"
                     >
                         {{ title }}
                     </h1>
 
                     <p
                         v-if="description"
-                        class="mt-1 text-xs leading-5 text-[#64756a] sm:text-[13px]"
+                        class="mt-1 text-xs leading-5 text-[#69766B] sm:text-[13px]"
                     >
                         {{ description }}
                     </p>
@@ -68,19 +77,29 @@ const emit = defineEmits<{
                 <Link
                     v-if="actionHref && actionLabel"
                     :href="actionHref"
-                    class="inline-flex items-center justify-center gap-2 rounded-lg border-b-[3px] border-b-[#092f1a] bg-[#187642] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-[#126236] focus:outline-none focus:ring-2 focus:ring-[#187642]/20 sm:text-[13px]"
+                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#34463A] bg-[#34463A] px-[23px] py-0 text-[13px] font-semibold text-white transition-colors duration-[250ms] ease-in-out hover:border-[#741203] hover:bg-[#741203] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#D8DFD0] focus-visible:outline-offset-2 motion-reduce:transition-none"
                 >
-                    <component :is="actionIcon" :size="16" />
+                    <component
+                        :is="actionIcon"
+                        :size="16"
+                        :stroke-width="2"
+                        aria-hidden="true"
+                    />
                     <span>{{ actionLabel }}</span>
                 </Link>
 
                 <button
                     v-else-if="actionLabel"
                     type="button"
-                    class="inline-flex items-center justify-center gap-2 rounded-lg border-b-[3px] border-b-[#092f1a] bg-[#187642] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-[#126236] focus:outline-none focus:ring-2 focus:ring-[#187642]/20 sm:text-[13px]"
+                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#34463A] bg-[#34463A] px-[23px] py-0 text-[13px] font-semibold text-white transition-colors duration-[250ms] ease-in-out hover:border-[#741203] hover:bg-[#741203] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#D8DFD0] focus-visible:outline-offset-2 motion-reduce:transition-none"
                     @click="emit('action')"
                 >
-                    <component :is="actionIcon" :size="16" />
+                    <component
+                        :is="actionIcon"
+                        :size="16"
+                        :stroke-width="2"
+                        aria-hidden="true"
+                    />
                     <span>{{ actionLabel }}</span>
                 </button>
             </div>
