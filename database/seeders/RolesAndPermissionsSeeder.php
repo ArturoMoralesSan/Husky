@@ -5,11 +5,14 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
         /*
         |--------------------------------------------------------------------------
         | Roles administrativos
@@ -28,7 +31,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | Permisos de configuración
+        | Permisos
         |--------------------------------------------------------------------------
         */
 
@@ -50,6 +53,52 @@ class RolesAndPermissionsSeeder extends Seeder
             'permissions.create',
             'permissions.edit',
             'permissions.delete',
+
+            // Productos
+            'products.view',
+            'products.create',
+            'products.edit',
+            'products.delete',
+
+            // Servicios
+            'services.view',
+            'services.create',
+            'services.edit',
+            'services.delete',
+
+            // Proyectos
+            'projects.view',
+            'projects.create',
+            'projects.edit',
+            'projects.delete',
+
+            // Clientes
+            'clients.view',
+            'clients.create',
+            'clients.edit',
+            'clients.delete',
+
+            // Banners
+            'banners.view',
+            'banners.create',
+            'banners.edit',
+            'banners.delete',
+
+            // Nosotros
+            'about.view',
+            'about.create',
+            'about.edit',
+
+            // Contacto
+            'contact.view',
+            'contact.create',
+            'contact.edit',
+
+            // Cotizaciones
+            'quotes.view',
+            'quotes.create',
+            'quotes.edit',
+            'quotes.delete',
         ];
 
         /*
@@ -82,10 +131,12 @@ class RolesAndPermissionsSeeder extends Seeder
         | Admin
         |--------------------------------------------------------------------------
         |
-        | Puede administrar usuarios, roles y permisos.
+        | Puede administrar los módulos y registros del sistema.
         |
         */
 
         $admin->syncPermissions($permissions);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

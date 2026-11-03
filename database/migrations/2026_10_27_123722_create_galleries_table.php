@@ -6,20 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
+
+            // Modelo al que pertenece la galería
+            $table->string('model_type');
+            $table->unsignedBigInteger('model_id');
+
+            $table->string('name')->nullable();
+
             $table->timestamps();
+
+            // Una galería por modelo
+            $table->unique(
+                ['model_type', 'model_id'],
+                'galleries_model_type_model_id_unique'
+            );
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('galleries');

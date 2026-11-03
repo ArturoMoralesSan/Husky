@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -20,8 +21,6 @@ class Product extends Model
         'treatment',
         'retention',
         'retention_unit',
-        'image',
-        'image_alt',
         'is_active',
         'sort_order',
     ];
@@ -49,5 +48,10 @@ class Product extends Model
                 $product->slug = Str::slug($product->name);
             }
         });
+    }
+
+    public function gallery(): MorphOne
+    {
+        return $this->morphOne(Gallery::class, 'model');
     }
 }

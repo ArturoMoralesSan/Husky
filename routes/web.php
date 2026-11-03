@@ -5,6 +5,13 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\AboutController;
+use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +20,30 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/nosotros', [HomeController::class, 'nosotros'])->name('nosotros');
+
+Route::get('/productos', [HomeController::class, 'products'])->name('products');
+
+// Detalle individual de producto
+Route::get('/productos/{product:slug}', [HomeController::class, 'showProduct'])->name('products.show');
+
+Route::get('/servicios', [HomeController::class, 'services'])->name('services.index');
+
+Route::get('/servicios/{slug}', [HomeController::class, 'showService'])->name('services.show');
+
+
+Route::get('/proyectos', [HomeController::class, 'projects'])->name('projects.index');
+
+Route::get('/proyectos/{slug}', [HomeController::class, 'showProject'])->name('projects.show');
+
+
+Route::get('/quotes/options', [QuoteController::class, 'options'])->name('quotes.options');
+
+
+Route::post('/quotes', [QuoteController::class, 'store'])
+    ->name('quotes.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +135,95 @@ Route::middleware(['auth', 'verified'])
                 'update' => 'permission:products.edit',
                 'destroy' => 'permission:products.delete',
             ]);
+
+        Route::resource('services', ServiceController::class)
+            ->middleware([
+                'index' => 'permission:services.view',
+                'create' => 'permission:services.create',
+                'store' => 'permission:services.create',
+                'edit' => 'permission:services.edit',
+                'update' => 'permission:services.edit',
+                'destroy' => 'permission:services.delete',
+            ]);
+        Route::resource('clients', ClientController::class)
+            ->middleware([
+                'index' => 'permission:clients.view',
+                'create' => 'permission:clients.create',
+                'store' => 'permission:clients.create',
+                'edit' => 'permission:clients.edit',
+                'update' => 'permission:clients.edit',
+                'destroy' => 'permission:clients.delete',
+            ]);
+        
+        Route::resource('projects', ProjectController::class)
+            ->middleware([
+                'index' => 'permission:projects.view',
+                'create' => 'permission:projects.create',
+                'store' => 'permission:projects.create',
+                'edit' => 'permission:projects.edit',
+                'update' => 'permission:projects.edit',
+                'destroy' => 'permission:projects.delete',
+            ]);
+
+        Route::get('about', [AboutController::class, 'index'])
+            ->middleware('permission:about.view')
+            ->name('about.index');
+
+        Route::get('about/create', [AboutController::class, 'create'])
+            ->middleware('permission:about.create')
+            ->name('about.create');
+
+        Route::post('about', [AboutController::class, 'store'])
+            ->middleware('permission:about.create')
+            ->name('about.store');
+
+        Route::get('about/edit', [AboutController::class, 'edit'])
+            ->middleware('permission:about.edit')
+            ->name('about.edit');
+
+        Route::put('about', [AboutController::class, 'update'])
+            ->middleware('permission:about.edit')
+            ->name('about.update');
+
+        
+        /*
+        |--------------------------------------------------------------------------
+        | Contacto
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('contact', [ContactController::class, 'index'])
+            ->middleware('permission:contact.view')
+            ->name('contact.index');
+
+        Route::get('contact/create', [ContactController::class, 'create'])
+            ->middleware('permission:contact.create')
+            ->name('contact.create');
+
+        Route::post('contact', [ContactController::class, 'store'])
+            ->middleware('permission:contact.create')
+            ->name('contact.store');
+
+        Route::get('contact/edit', [ContactController::class, 'edit'])
+            ->middleware('permission:contact.edit')
+            ->name('contact.edit');
+
+        Route::put('contact', [ContactController::class, 'update'])
+            ->middleware('permission:contact.edit')
+            ->name('contact.update');
+
+        
+        Route::get('quotes', [QuoteController::class, 'index'])
+            ->middleware('permission:quotes.view')
+            ->name('quotes.index');
+
+        Route::patch('quotes/{quote}/status', [QuoteController::class, 'updateStatus'])
+            ->middleware('permission:quotes.edit')
+            ->name('quotes.update-status');
+
+                
     });
+
+
 
 require __DIR__.'/settings.php';

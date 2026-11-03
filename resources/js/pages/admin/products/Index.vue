@@ -26,8 +26,7 @@ interface Product {
     treatment: string | null
     retention: string | number | null
     retention_unit: string | null
-    image: string | null
-    image_alt: string | null
+    image_url: string | null
     is_active: boolean
     sort_order: number
     variants_count: number
@@ -51,7 +50,7 @@ interface ProductsPagination {
 
 const props = defineProps<{
     products: ProductsPagination
-    filters: {
+    filters?: {
         search?: string
         status?: string | number | boolean
     }
@@ -93,18 +92,18 @@ const clearFilters = () => {
     )
 }
 
-const imageUrl = (path: string | null) => {
-    if (!path) return null
+const imageUrl = (url: string | null): string | null => {
+    if (!url) return null
 
     if (
-        path.startsWith('http://') ||
-        path.startsWith('https://') ||
-        path.startsWith('/')
+        url.startsWith('http://') ||
+        url.startsWith('https://') ||
+        url.startsWith('/')
     ) {
-        return path
+        return url
     }
 
-    return `/storage/${path}`
+    return `/storage/${url}`
 }
 
 const deleteProduct = (product: Product) => {
@@ -227,9 +226,9 @@ defineOptions({
                                 class="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-[#DCE7DF] bg-[#F2F7F4]"
                             >
                                 <img
-                                    v-if="imageUrl(product.image)"
-                                    :src="imageUrl(product.image) ?? ''"
-                                    :alt="product.image_alt || product.name"
+                                    v-if="imageUrl(product.image_url)"
+                                    :src="imageUrl(product.image_url) ?? ''"
+                                    :alt="product.name"
                                     class="h-full w-full object-cover"
                                 />
 

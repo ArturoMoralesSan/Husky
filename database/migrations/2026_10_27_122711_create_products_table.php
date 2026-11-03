@@ -22,9 +22,6 @@ return new class extends Migration
             $table->decimal('retention', 10, 4)->nullable();
             $table->string('retention_unit')->nullable();
 
-            $table->string('image')->nullable();
-            $table->string('image_alt')->nullable();
-
             $table->boolean('is_active')->default(true)->index();
             $table->unsignedInteger('sort_order')->default(0);
 

@@ -1,330 +1,576 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3'
 import {
-    ArrowDown,
     ArrowRight,
     ArrowUpRight,
     Check,
+    CheckCircle2,
     ChevronDown,
     Facebook,
     Instagram,
-    Leaf,
-    Menu,
     Phone,
-    Play,
     ShieldCheck,
     TreeDeciduous,
     X,
-} from 'lucide-vue-next';
-import { ref } from 'vue';
+} from 'lucide-vue-next'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
-import '../../css/husky-landing.css';
+import HuskyFooter from '@/Components/HuskyFooter.vue'
+import HuskyHeader from '@/Components/HuskyHeader.vue'
+import HuskyHero from '@/Components/HuskyHero.vue'
+import ItemCards from '@/Components/ItemCards.vue'
+import ImageGallery from '@/Components/ImageGallery.vue'
 
-const menuOpen = ref(false);
-const videoOpen = ref(false);
-const selectedProduct = ref('');
-const formSent = ref(false);
+import '../../css/husky-landing.css'
 
-const products = [
-    {
-        number: '01',
-        title: 'Madera impregnada',
-        description:
-            'Madera de pino tratada para aplicaciones que requieren protección.',
-        image: 'https://industriashusky.com.mx/wp-content/uploads/2016/03/instalaciones_husky4.jpg',
-    },
-    {
-        number: '02',
-        title: 'Postes eléctricos y telefónicos',
-        description:
-            'Postes de pino impregnado según las especificaciones del proyecto.',
-        image: 'https://industriashusky.com.mx/wp-content/uploads/2016/03/2-Poste-Telefonico.jpg',
-    },
-    {
-        number: '03',
-        title: 'Vigas y gualdras',
-        description:
-            'Madera estructural para usos interiores y proyectos constructivos.',
-        image: 'https://industriashusky.com.mx/wp-content/uploads/2016/03/Patio-4.jpg',
-    },
-    {
-        number: '04',
-        title: 'Madera para muelles y marinas',
-        description:
-            'Pilotes, madera y duela de acuerdo con especificaciones de ingeniería.',
-        image: 'https://industriashusky.com.mx/wp-content/uploads/2016/03/8-Muelle.jpg',
-    },
-    {
-        number: '05',
-        title: 'Duelas y deck',
-        description:
-            'Madera para terrazas y espacios exteriores, según las necesidades de cada obra.',
-        image: 'https://industriashusky.com.mx/wp-content/uploads/2016/03/3.-Duela-para-Deck.jpg',
-    },
-];
+// -----------------------------------------------------------------------------
+// TIPOS
+// -----------------------------------------------------------------------------
 
-const services = [
-    {
-        number: '01',
-        title: 'Impregnación a vacío-presión',
-        description:
-            'Tratamiento de madera con CCA-C base óxido o creosota, de acuerdo con la aplicación requerida.',
-    },
-    {
-        number: '02',
-        title: 'Procesamiento y maquila',
-        description:
-            'Aserrío, descortezado, torneado, cepillado S2S y S4S, duela, machimbre y crucetas.',
-    },
-    {
-        number: '03',
-        title: 'Planeación, ingeniería e instalación',
-        description:
-            'Diseño, cálculo estructural, planeación de materiales e instalación de proyectos de madera.',
-    },
-    {
-        number: '04',
-        title: 'Secado artificial y asesoría técnica',
-        description:
-            'Orientación técnica y procesos de secado para madera, vigas y gualdras de pino.',
-    },
-];
-
-const clients = [
-    {
-        number: '01',
-        name: 'CFE',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2016/12/logo_cfe-150x75.png',
-    },
-    {
-        number: '02',
-        name: 'Telmex',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2016/12/logo_telmex-150x75.png',
-    },
-    {
-        number: '03',
-        name: 'Grupo Vidanta',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2016/12/logo_grupovidanta-150x75.png',
-    },
-    {
-        number: '04',
-        name: 'Velas Vallarta',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_velasvallarta-150x75.png',
-    },
-    {
-        number: '05',
-        name: 'Casa Madero',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_casamadero-150x75.png',
-    },
-    {
-        number: '06',
-        name: 'Multipak',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_multipak-150x75.png',
-    },
-    {
-        number: '07',
-        name: 'Marina FMH',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_marinafmh-150x75.png',
-    },
-    {
-        number: '08',
-        name: 'Albon',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_albon-150x75.png',
-    },
-    {
-        number: '09',
-        name: 'Equipos Eléctricos de Sinaloa',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_equiposelectricosdesinaloa-150x75.png',
-    },
-    {
-        number: '10',
-        name: 'Dacesa',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_dacesa-150x75.png',
-    },
-    {
-        number: '11',
-        name: 'CM Maderas',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_cmmaderas-150x75.png',
-    },
-    {
-        number: '12',
-        name: 'Eléctrica Valenzuela',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_electricavalenzuela-150x75.png',
-    },
-    {
-        number: '13',
-        name: 'DAESA',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_daesa-150x75.png',
-    },
-    {
-        number: '14',
-        name: 'PROCOPSA',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_procopsa-150x75.png',
-    },
-    {
-        number: '15',
-        name: 'Entre Otros',
-        logo: 'https://industriashusky.com.mx/wp-content/uploads/2017/03/logo_entreotros-150x75.png',
-    },
-];
-
-const year = new Date().getFullYear();
-
-function closeMenu() {
-    menuOpen.value = false;
+interface Banner {
+    title: string
+    subtitle: string | null
+    description: string | null
+    image: string
+    image_url: string
+    alt_text: string | null
+    link_url: string | null
+    button_text: string | null
+    open_in_new_tab: boolean
 }
 
-function chooseProduct(product: string) {
-    selectedProduct.value = product;
-    closeMenu();
+interface Product {
+    id: number
+    name: string
+    slug: string
+    short_description: string | null
+    image_url: string | null
+    image_alt: string
+}
+
+interface Service {
+    id: number
+    name: string
+    slug: string
+    description: string | null
+}
+
+interface Project {
+    id: number
+    name: string
+    slug: string
+    short_description: string | null
+    image_url: string | null
+    image_alt: string
+}
+
+interface Client {
+    id: number
+    name: string
+    logo_url: string | null
+}
+
+interface Contact {
+    email: string | null
+    phone_primary: string | null
+    phone_secondary: string | null
+    phone_tertiary: string | null
+    address: string | null
+    whatsapp: string | null
+    schedule_weekdays: string | null
+    schedule_saturday: string | null
+    facebook_url: string | null
+    instagram_url: string | null
+}
+
+interface AboutGalleryImage {
+    id: number
+    file: string
+    url: string
+    alt: string | null
+    is_primary: boolean
+    sort_order: number
+}
+
+interface About {
+    id: number
+    history: string | null
+    gallery_images: AboutGalleryImage[]
+}
+
+const props = defineProps<{
+    banner: Banner | null
+    products: Product[]
+    services: Service[]
+    projects: Project[]
+    clients: Client[]
+    contact: Contact | null
+    about: About | null
+}>()
+
+// -----------------------------------------------------------------------------
+// SEO
+// -----------------------------------------------------------------------------
+
+const seoTitle = 'Industrias Husky | Madera tratada y soluciones forestales'
+
+const seoDescription =
+    'En Industrias Husky ofrecemos madera impregnada, productos forestales preservados y soluciones para construcción, infraestructura, industria y proyectos especiales. Conoce nuestros productos y servicios.'
+
+const canonicalUrl = 'https://industriashusky.com.mx/'
+
+const ogImage = 'https://industriashusky.com.mx/images/og-default.jpg'
+
+const organizationSchema = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Industrias Husky',
+    url: canonicalUrl,
+    logo: ogImage,
+    description: seoDescription,
+    email: props.contact?.email || undefined,
+    telephone: props.contact?.phone_primary || undefined,
+    sameAs: [
+        props.contact?.facebook_url,
+        props.contact?.instagram_url,
+    ].filter((url): url is string => Boolean(url)),
+}))
+
+const organizationSchemaJson = computed(() =>
+    JSON.stringify(organizationSchema.value),
+)
+
+// -----------------------------------------------------------------------------
+// COTIZACIONES
+// -----------------------------------------------------------------------------
+
+const selectedItem = ref('')
+const toastVisible = ref(false)
+const toastMessage = ref('')
+const toastType = ref<'success' | 'error'>('success')
+
+let toastTimeout: ReturnType<typeof setTimeout> | undefined
+
+const quoteForm = useForm({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    product_id: null as number | null,
+    service_id: null as number | null,
+    item_name: '',
+    description: '',
+})
+
+// -----------------------------------------------------------------------------
+// PRESELECCIÓN DE PRODUCTOS Y SERVICIOS DESDE LA URL
+// -----------------------------------------------------------------------------
+
+onMounted(async () => {
+    const params = new URLSearchParams(window.location.search)
+
+    // Parámetros actuales y compatibilidad con los anteriores.
+    const productParam =
+        params.get('producto') || params.get('product')
+
+    const serviceParam =
+        params.get('servicio') || params.get('service')
+
+    const productId = productParam ? Number(productParam) : null
+    const serviceId = serviceParam ? Number(serviceParam) : null
+
+    // Si viene un producto en la URL, lo seleccionamos.
+    if (
+        productId !== null &&
+        Number.isInteger(productId) &&
+        productId > 0
+    ) {
+        const productExists = props.products.some(
+            product => product.id === productId,
+        )
+
+        if (productExists) {
+            selectedItem.value = `product:${productId}`
+        }
+    }
+
+    // Si viene un servicio en la URL, lo seleccionamos.
+    else if (
+        serviceId !== null &&
+        Number.isInteger(serviceId) &&
+        serviceId > 0
+    ) {
+        const serviceExists = props.services.some(
+            service => service.id === serviceId,
+        )
+
+        if (serviceExists) {
+            selectedItem.value = `service:${serviceId}`
+        }
+    }
+
+    // Si la URL incluye #contacto, desplazamos hasta el formulario.
+    if (window.location.hash === '#contacto') {
+        await nextTick()
+
+        document.querySelector('#contacto')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        })
+    }
+})
+
+function showToast(
+    message: string,
+    type: 'success' | 'error' = 'success',
+) {
+    if (toastTimeout) {
+        clearTimeout(toastTimeout)
+    }
+
+    toastMessage.value = message
+    toastType.value = type
+    toastVisible.value = true
+
+    toastTimeout = setTimeout(() => {
+        toastVisible.value = false
+    }, 5000)
+}
+
+function closeToast() {
+    if (toastTimeout) {
+        clearTimeout(toastTimeout)
+    }
+
+    toastVisible.value = false
 }
 
 function submitQuote() {
-    const form = document.querySelector<HTMLFormElement>('#husky-quote-form');
+    const form = document.querySelector<HTMLFormElement>(
+        '#husky-quote-form',
+    )
 
     if (!form || !form.reportValidity()) {
-return;
+        return
+    }
+
+    const [type, id] = selectedItem.value.split(':')
+    const selectedId = Number(id)
+
+    quoteForm.product_id = null
+    quoteForm.service_id = null
+    quoteForm.item_name = ''
+
+    if (type === 'product' && selectedId) {
+        const product = props.products.find(
+            item => item.id === selectedId,
+        )
+
+        if (!product) {
+            showToast(
+                'El producto seleccionado ya no está disponible.',
+                'error',
+            )
+            return
+        }
+
+        quoteForm.product_id = product.id
+        quoteForm.item_name = product.name
+    } else if (type === 'service' && selectedId) {
+        const service = props.services.find(
+            item => item.id === selectedId,
+        )
+
+        if (!service) {
+            showToast(
+                'El servicio seleccionado ya no está disponible.',
+                'error',
+            )
+            return
+        }
+
+        quoteForm.service_id = service.id
+        quoteForm.item_name = service.name
+    } else if (selectedItem.value === 'other') {
+        quoteForm.item_name = 'Otro proyecto'
+    } else {
+        showToast('Selecciona un producto o servicio.', 'error')
+        return
+    }
+
+    quoteForm.post('/quotes', {
+        preserveScroll: true,
+
+        onSuccess: () => {
+            quoteForm.reset()
+            selectedItem.value = ''
+
+            showToast(
+                '¡Tu solicitud de cotización se envió correctamente! Nos pondremos en contacto contigo.',
+                'success',
+            )
+        },
+
+        onError: () => {
+            showToast(
+                'No fue posible enviar tu solicitud. Revisa los campos e inténtalo nuevamente.',
+                'error',
+            )
+        },
+    })
 }
 
-    const data = new FormData(form);
+// -----------------------------------------------------------------------------
+// NAVEGACIÓN A PRODUCTOS
+// -----------------------------------------------------------------------------
 
-    const subject = encodeURIComponent(
-        `Solicitud de cotización — ${String(data.get('interest') || 'Proyecto Husky')}`,
-    );
+function openProduct(product: { slug: string }) {
+    if (!product.slug) return
 
-    const body = encodeURIComponent(
-        `Hola, me gustaría solicitar información/cotización.\n\n` +
-            `Nombre: ${data.get('name') || ''}\n` +
-            `Empresa: ${data.get('company') || ''}\n` +
-            `Correo: ${data.get('email') || ''}\n` +
-            `Teléfono: ${data.get('phone') || ''}\n` +
-            `Interés: ${data.get('interest') || ''}\n\n` +
-            `Detalles del proyecto:\n${data.get('message') || 'Sin detalles adicionales'}\n`,
-    );
+    router.visit(`/productos/${product.slug}`)
+}
 
-    formSent.value = true;
+// -----------------------------------------------------------------------------
+// PRODUCTOS
+// -----------------------------------------------------------------------------
 
-    window.location.href =
-        `mailto:info@industriashusky.com.mx?subject=${subject}&body=${body}`;
+const products = computed(() =>
+    props.products.map((product, index) => ({
+        id: product.id,
+        slug: product.slug,
+        href: `/productos/${product.slug}`,
+        number: String(index + 1).padStart(2, '0'),
+        title: product.name,
+        description: product.short_description || '',
+        image: product.image_url,
+        imageAlt: product.image_alt || product.name,
+    })),
+)
+
+// -----------------------------------------------------------------------------
+// SERVICIOS
+// -----------------------------------------------------------------------------
+
+const services = computed(() =>
+    props.services.map((service, index) => ({
+        id: service.id,
+        slug: service.slug,
+        href: `/servicios/${service.slug}`,
+        number: String(index + 1).padStart(2, '0'),
+        title: service.name,
+        description: service.description || '',
+    })),
+)
+
+// -----------------------------------------------------------------------------
+// PROYECTOS
+// -----------------------------------------------------------------------------
+
+const projectItems = computed(() =>
+    props.projects.map((project, index) => ({
+        id: project.id,
+        slug: project.slug,
+        href: `/proyectos/${project.slug}`,
+        number: String(index + 1).padStart(2, '0'),
+        title: project.name,
+        description: project.short_description || '',
+        image: project.image_url,
+        imageAlt: project.image_alt || project.name,
+    })),
+)
+
+// -----------------------------------------------------------------------------
+// GALERÍA NOSOTROS
+// -----------------------------------------------------------------------------
+
+const nosotrosGallery = computed(() =>
+    (props.about?.gallery_images ?? [])
+        .slice()
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(image => ({
+            src: image.url,
+            alt: image.alt || 'Galería de Industrias Husky',
+        })),
+)
+
+// -----------------------------------------------------------------------------
+// CONTACTO
+// -----------------------------------------------------------------------------
+
+const contactEmail = computed(
+    () => props.contact?.email || 'info@industriashusky.com.mx',
+)
+
+const contactPhones = computed(() =>
+    [
+        props.contact?.phone_primary,
+        props.contact?.phone_secondary,
+        props.contact?.phone_tertiary,
+    ].filter((phone): phone is string => Boolean(phone)),
+)
+
+const whatsappNumber = computed(() => {
+    const number =
+        props.contact?.whatsapp ||
+        props.contact?.phone_primary ||
+        ''
+
+    return number.replace(/\D/g, '')
+})
+
+const whatsappUrl = computed(() => {
+    const message = encodeURIComponent(
+        'Hola, me gustaría solicitar información sobre sus productos y servicios.',
+    )
+
+    return whatsappNumber.value
+        ? `https://wa.me/${whatsappNumber.value}?text=${message}`
+        : null
+})
+
+function phoneUrl(phone: string) {
+    return `tel:${phone.replace(/[^\d+]/g, '')}`
 }
 </script>
 
 <template>
     <Head>
-        <title>Husky Industrias | Madera que perdura</title>
+        <title>{{ seoTitle }}</title>
+
         <meta
+            head-key="description"
             name="description"
-            content="Soluciones en madera tratada para proyectos de infraestructura, construcción, industria y espacios junto al agua. Solicita una cotización a Industrias Husky."
+            :content="seoDescription"
         />
-        <meta name="theme-color" content="#f8f8f2" />
+
+        <link
+            head-key="canonical"
+            rel="canonical"
+            :href="canonicalUrl"
+        />
+
+        <meta
+            head-key="theme-color"
+            name="theme-color"
+            content="#f8f8f2"
+        />
+
+        <meta
+            head-key="author"
+            name="author"
+            content="Industrias Husky"
+        />
+
+        <meta
+            head-key="language"
+            name="language"
+            content="es-MX"
+        />
+
+        <!-- OPEN GRAPH -->
+        <meta
+            head-key="og:type"
+            property="og:type"
+            content="website"
+        />
+
+        <meta
+            head-key="og:site_name"
+            property="og:site_name"
+            content="Industrias Husky"
+        />
+
+        <meta
+            head-key="og:title"
+            property="og:title"
+            :content="seoTitle"
+        />
+
+        <meta
+            head-key="og:description"
+            property="og:description"
+            :content="seoDescription"
+        />
+
+        <meta
+            head-key="og:url"
+            property="og:url"
+            :content="canonicalUrl"
+        />
+
+        <meta
+            head-key="og:image"
+            property="og:image"
+            :content="ogImage"
+        />
+
+        <meta
+            head-key="og:image:alt"
+            property="og:image:alt"
+            content="Industrias Husky, soluciones en madera tratada"
+        />
+
+        <meta
+            head-key="og:locale"
+            property="og:locale"
+            content="es_MX"
+        />
+
+        <!-- TWITTER -->
+        <meta
+            head-key="twitter:card"
+            name="twitter:card"
+            content="summary_large_image"
+        />
+
+        <meta
+            head-key="twitter:title"
+            name="twitter:title"
+            :content="seoTitle"
+        />
+
+        <meta
+            head-key="twitter:description"
+            name="twitter:description"
+            :content="seoDescription"
+        />
+
+        <meta
+            head-key="twitter:image"
+            name="twitter:image"
+            :content="ogImage"
+        />
+
+        <!-- DATOS ESTRUCTURADOS -->
+        <component
+            :is="'script'"
+            type="application/ld+json"
+            head-key="organization-schema"
+            v-html="organizationSchemaJson"
+        />
     </Head>
 
     <div class="husky-site">
-        <!-- ENCABEZADO -->
-        <header id="inicio" class="husky-header">
-            <a
-                class="husky-brand"
-                href="#inicio"
-                aria-label="Husky Industrias, inicio"
-                @click="closeMenu"
-            >
-                <img
-                    class="husky-brand-logo"
-                    src="/images/industriashusky.webp"
-                    alt="Industrias Husky"
-                    fetchpriority="high"
-                />
-            </a>
-
-            <button
-                class="husky-menu-toggle"
-                type="button"
-                :aria-expanded="menuOpen"
-                aria-label="Abrir o cerrar menú"
-                @click="menuOpen = !menuOpen"
-            >
-                <X v-if="menuOpen" :size="21" />
-                <Menu v-else :size="21" />
-            </button>
-
-            <nav
-                class="husky-nav"
-                :class="{ 'is-open': menuOpen }"
-                aria-label="Navegación principal"
-            >
-                <a class="is-active" href="#inicio" @click="closeMenu">Inicio</a>
-                <a href="#productos" @click="closeMenu">Productos</a>
-                <a href="#servicios" @click="closeMenu">Servicios</a>
-                <a href="#proyectos" @click="closeMenu">Aplicaciones</a>
-                <a href="#clientes" @click="closeMenu">Clientes</a>
-                <a href="#nosotros" @click="closeMenu">Nosotros</a>
-                <a href="#contacto" @click="closeMenu">Contacto</a>
-            </nav>
-
-            <a
-                class="husky-button husky-button-solid husky-header-cta"
-                href="#contacto"
-            >
-                Solicitar cotización
-                <ArrowUpRight :size="15" />
-            </a>
-        </header>
+        <HuskyHeader />
 
         <main>
             <!-- PORTADA -->
-            <section class="husky-hero" aria-labelledby="husky-hero-title">
-                <div
-                    class="husky-hero-image"
-                    role="img"
-                    aria-label="Madera y trabajos de Industrias Husky"
-                />
-                <div class="husky-hero-shade" />
-
-                <div class="husky-container husky-hero-content">
-                    <p class="husky-eyebrow husky-eyebrow-light">
-                        <span />
-                        SOLUCIONES EN MADERA
-                    </p>
-
-                    <h1 id="husky-hero-title">
-                        Madera preparada para durar.
-                    </h1>
-
-                    <p class="husky-hero-copy">
-                        Madera de pino impregnada y maderas tropicales para proyectos
-                        que requieren resistencia y calidad.
-                    </p>
-
-                    <div class="husky-hero-actions">
-                        <a
-                            class="husky-button husky-button-outline"
-                            href="#productos"
-                        >
-                            Explorar productos
-                            <ArrowRight :size="17" />
-                        </a>
-                    </div>
-                </div>
-
-                <a
-                    class="husky-scroll-cue"
-                    href="#nosotros"
-                    aria-label="Desplazarse a la siguiente sección"
-                >
-                    <ArrowDown :size="19" />
-                </a>
-            </section>
+            <HuskyHero
+                :banner="props.banner"
+                scroll-target="#nosotros"
+                min-height="80vh"
+            />
 
             <!-- NOSOTROS -->
             <section id="nosotros" class="husky-intro husky-section">
                 <div class="husky-container husky-intro-grid">
                     <div class="husky-intro-photo">
-                        <img
-                            src="https://industriashusky.com.mx/wp-content/uploads/2016/03/instalaciones_husky1.jpg"
-                            alt="Instalaciones de tratamiento e impregnación de madera de Industrias Husky"
-                            loading="lazy"
+                        <ImageGallery
+                            v-if="nosotrosGallery.length"
+                            :items="nosotrosGallery"
+                            :autoplay="true"
+                            :interval="4000"
                         />
-                        <span>Instalaciones y procesos de impregnación</span>
                     </div>
 
                     <div class="husky-intro-copy">
@@ -332,7 +578,17 @@ return;
 
                         <h2>Más de 50 años construyendo confianza.</h2>
 
-                        <p class="husky-body-copy">
+                        <p
+                            v-if="props.about?.history"
+                            class="husky-body-copy"
+                        >
+                            {{ props.about.history }}
+                        </p>
+
+                        <p
+                            v-else
+                            class="husky-body-copy"
+                        >
                             Suministramos productos forestales preservados y madera
                             impregnada. Integramos procesamiento, secado, tratamiento,
                             asesoría e instalación para proyectos habitacionales,
@@ -366,157 +622,84 @@ return;
 
                             <div class="husky-value">
                                 <span>
-                                    <Leaf :size="22" stroke-width="1.4" />
+                                    <TreeDeciduous :size="22" stroke-width="1.4" />
                                 </span>
                                 <strong>Compromiso</strong>
                                 <small>Servicio profesional</small>
                             </div>
+                        </div>
+
+                        <div class="husky-intro-actions mb-4">
+                            <a
+                                href="/nosotros"
+                                class="husky-button husky-button-solid"
+                            >
+                                Conocer más
+                                <ArrowRight :size="17" />
+                            </a>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- PRODUCTOS -->
-            <section id="productos" class="husky-products husky-section">
-                <div class="husky-container">
-                    <div class="husky-section-heading">
-                        <div>
-                            <p class="husky-eyebrow">NUESTRAS SOLUCIONES</p>
-                            <h2>Madera tratada para cada necesidad.</h2>
-                        </div>
-
-                        <a class="husky-text-link" href="#contacto">
-                            Encuentra tu solución
-                            <ArrowRight :size="16" />
-                        </a>
-                    </div>
-
-                    <div class="husky-product-grid">
-                        <a
-                            v-for="product in products"
-                            :key="product.number"
-                            class="husky-product-card"
-                            href="#contacto"
-                            @click="chooseProduct(product.title)"
-                        >
-                            <div class="husky-product-image">
-                                <img
-                                    :src="product.image"
-                                    :alt="product.title"
-                                    loading="lazy"
-                                />
-                                <span>{{ product.number }}</span>
-                            </div>
-
-                            <div class="husky-product-info">
-                                <h3>{{ product.title }}</h3>
-                                <p>{{ product.description }}</p>
-                                <ArrowUpRight
-                                    class="husky-card-arrow"
-                                    :size="19"
-                                />
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </section>
+            <ItemCards
+                id="productos"
+                variant="grid"
+                :items="products"
+                eyebrow="NUESTRAS SOLUCIONES"
+                title="Madera tratada para cada necesidad."
+                link-text="Encuentra tu solución"
+                link-href="/productos"
+                empty-text="Estamos preparando nuestro catálogo de productos."
+                @select="openProduct"
+            />
 
             <!-- SERVICIOS -->
-            <section id="servicios" class="husky-services husky-section">
-                <div class="husky-container husky-services-grid">
-                    <div class="husky-services-intro">
-                        <span class="husky-services-kicker">
-                            <span class="husky-services-kicker-dot"></span>
-                            SERVICIOS HUSKY
+            <ItemCards
+                id="servicios"
+                variant="list"
+                :items="services"
+                eyebrow="SERVICIOS HUSKY"
+                title="Soluciones en madera, de principio a fin."
+                link-text="Conoce más"
+                link-href="/servicios"
+                empty-text="Estamos preparando nuestro catálogo de servicios."
+            >
+                <template #intro>
+                    <p class="husky-services-lead">
+                        Desde el tratamiento de la madera hasta la planeación
+                        e instalación, conoce los procesos y servicios que
+                        podemos ofrecer para tu proyecto.
+                    </p>
+                </template>
+
+                <template #caption>
+                    <div class="husky-services-caption">
+                        <TreeDeciduous :size="17" stroke-width="1.5" />
+                        <span>
+                            Experiencia y procesos especializados
+                            en productos forestales.
                         </span>
-
-                        <h2>
-                            Soluciones en madera,
-                            <span>de principio a fin.</span>
-                        </h2>
-
-                        <p class="husky-services-lead">
-                            Desde el tratamiento de la madera hasta la planeación
-                            e instalación, conoce los procesos y servicios que
-                            podemos ofrecer para tu proyecto.
-                        </p>
-
-                        <div class="husky-services-caption">
-                            <Leaf :size="17" stroke-width="1.5" />
-                            <span>
-                                Experiencia y procesos especializados
-                                en productos forestales.
-                            </span>
-                        </div>
                     </div>
+                </template>
 
-                    <div class="husky-service-list">
-                        <article
-                            v-for="service in services"
-                            :key="service.number"
-                            class="husky-service-item"
-                        >
-                            <span class="husky-service-number">
-                                {{ service.number }}
-                            </span>
+                <template #footer>
+                    ¿Buscas otro servicio?
+                </template>
+            </ItemCards>
 
-                            <div class="husky-service-content">
-                                <h3>{{ service.title }}</h3>
-                                <p>{{ service.description }}</p>
-                            </div>
-
-                            <span
-                                class="husky-service-arrow"
-                                aria-hidden="true"
-                            >
-                                <ArrowUpRight :size="19" />
-                            </span>
-                        </article>
-
-                        <a class="husky-services-more" href="#contacto">
-                            <span>¿Buscas otro servicio?</span>
-                            <strong>
-                                Hablemos
-                                <ArrowRight :size="15" />
-                            </strong>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- APLICACIONES -->
-            <section id="proyectos" class="husky-project">
-                <div class="husky-project-copy">
-                    <p class="husky-eyebrow">
-                        APLICACIONES DE NUESTRA MADERA
-                    </p>
-
-                    <h2>Madera para proyectos que van más allá.</h2>
-
-                    <p>
-                        Desde postes, vigas y elementos estructurales hasta madera
-                        para muelles y marinas, ofrecemos productos y procesos
-                        especializados para distintas necesidades de construcción
-                        e infraestructura.
-                    </p>
-
-                    <a
-                        class="husky-button husky-button-solid"
-                        href="#contacto"
-                    >
-                        Encuentra tu solución
-                        <ArrowRight :size="17" />
-                    </a>
-                </div>
-
-                <div class="husky-project-image">
-                    <img
-                        src="https://industriashusky.com.mx/wp-content/uploads/2016/03/proyecto_turistico_madera.jpg"
-                        alt="Muelle de madera como ejemplo de aplicación de productos forestales"
-                        loading="lazy"
-                    />
-                </div>
-            </section>
+            <!-- PROYECTOS -->
+            <ItemCards
+                id="proyectos"
+                variant="featured"
+                eyebrow="NUESTROS PROYECTOS"
+                title="Experiencia que transforma la madera"
+                :items="projectItems"
+                link-href="/proyectos"
+                link-text="Conocer todos los proyectos"
+                empty-text="Estamos preparando nuestra galería de proyectos."
+            />
 
             <!-- CLIENTES -->
             <section id="clientes" class="husky-clients husky-section">
@@ -526,26 +709,35 @@ return;
                         <h2>La confianza se construye proyecto a proyecto.</h2>
                     </div>
 
-                    <div class="husky-clients-grid">
+                    <div
+                        v-if="props.clients.length"
+                        class="husky-clients-grid"
+                    >
                         <div
-                            v-for="client in clients"
-                            :key="client.number"
+                            v-for="client in props.clients"
+                            :key="client.id"
                             class="husky-client-logo"
                         >
                             <img
-                                :src="client.logo"
+                                v-if="client.logo_url"
+                                :src="client.logo_url"
                                 :alt="`Logotipo de ${client.name}`"
                                 loading="lazy"
-                                @error="($event.target as HTMLImageElement).style.display = 'none'"
                             />
 
                             <span
+                                v-else
                                 class="husky-client-placeholder"
                                 aria-hidden="true"
                             >
                                 <TreeDeciduous :size="23" stroke-width="1.2" />
                             </span>
                         </div>
+                    </div>
+
+                    <div v-else class="husky-products-empty">
+                        <TreeDeciduous :size="34" stroke-width="1.3" />
+                        <p>Estamos preparando nuestra lista de clientes.</p>
                     </div>
                 </div>
             </section>
@@ -565,54 +757,78 @@ return;
                             a encontrar una solución para tu proyecto.
                         </p>
 
-                        <div class="husky-contact-detail">
+                        <!-- CORREO -->
+                        <div
+                            v-if="contactEmail"
+                            class="husky-contact-detail"
+                        >
                             <span><Phone :size="17" /></span>
                             <div>
                                 <small>Correo electrónico</small>
-                                <a href="mailto:info@industriashusky.com.mx">
-                                    info@industriashusky.com.mx
+                                <a :href="`mailto:${contactEmail}`">
+                                    {{ contactEmail }}
                                 </a>
                             </div>
                         </div>
 
-                        <div class="husky-contact-detail">
+                        <!-- TELÉFONOS -->
+                        <div
+                            v-if="contactPhones.length"
+                            class="husky-contact-detail"
+                        >
                             <span><ArrowUpRight :size="18" /></span>
                             <div>
                                 <small>Atención comercial</small>
-                                <p>
-                                    <a href="tel:+526188357186">
-                                        +52 (618) 835-7186
-                                    </a>
-                                    ·
-                                    <a href="tel:+526188357187">
-                                        +52 (618) 835-7187
-                                    </a>
-                                </p>
-                                <p>
-                                    <a href="tel:+526188357190">
-                                        +52 (618) 835-7190
+
+                                <p
+                                    v-for="(phone, index) in contactPhones"
+                                    :key="index"
+                                >
+                                    <a :href="phoneUrl(phone)">
+                                        {{ phone }}
                                     </a>
                                 </p>
                             </div>
                         </div>
 
-                        <div class="husky-contact-detail">
-                            <span><Leaf :size="17" /></span>
+                        <!-- DIRECCIÓN Y HORARIOS -->
+                        <div
+                            v-if="
+                                props.contact?.address ||
+                                props.contact?.schedule_weekdays ||
+                                props.contact?.schedule_saturday
+                            "
+                            class="husky-contact-detail"
+                        >
+                            <span><TreeDeciduous :size="17" /></span>
                             <div>
                                 <small>Visítanos</small>
-                                <p>
-                                    Carretera Panamericana Km. 961, Durango,
-                                    Dgo., C.P. 34304, México
+
+                                <p v-if="props.contact?.address">
+                                    {{ props.contact.address }}
                                 </p>
-                                <p>Lun. a vie. 8:00–16:00 · Sáb. 8:00–15:00</p>
+
+                                <p v-if="props.contact?.schedule_weekdays">
+                                    Lun. a vie. {{ props.contact.schedule_weekdays }}
+                                </p>
+
+                                <p v-if="props.contact?.schedule_saturday">
+                                    Sábado {{ props.contact.schedule_saturday }}
+                                </p>
                             </div>
                         </div>
 
-                        <!-- REDES SOCIALES EN CONTACTO -->
-                        <div class="husky-contact-social">
+                        <!-- REDES SOCIALES -->
+                        <div
+                            v-if="
+                                props.contact?.facebook_url ||
+                                props.contact?.instagram_url
+                            "
+                            class="husky-contact-social"
+                        >
                             <div class="husky-contact-social-heading">
                                 <span class="husky-contact-social-line"></span>
-                                <p>CONÉCTATE CON HUSKY</p>
+                                <p>CONÉCTATE CON INDUSTRIAS HUSKY</p>
                             </div>
 
                             <h3>Sigamos en contacto.</h3>
@@ -624,7 +840,8 @@ return;
 
                             <div class="husky-contact-social-links">
                                 <a
-                                    href="https://www.facebook.com/industriashusky"
+                                    v-if="props.contact?.facebook_url"
+                                    :href="props.contact.facebook_url"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="husky-contact-social-card"
@@ -646,7 +863,8 @@ return;
                                 </a>
 
                                 <a
-                                    href="https://www.instagram.com/industrias.husky/"
+                                    v-if="props.contact?.instagram_url"
+                                    :href="props.contact.instagram_url"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="husky-contact-social-card"
@@ -680,20 +898,34 @@ return;
                             <label>
                                 Nombre completo
                                 <input
+                                    v-model="quoteForm.name"
                                     name="name"
                                     autocomplete="name"
                                     placeholder="¿Cómo te llamas?"
                                     required
                                 />
+                                <small
+                                    v-if="quoteForm.errors.name"
+                                    class="husky-form-error"
+                                >
+                                    {{ quoteForm.errors.name }}
+                                </small>
                             </label>
 
                             <label>
                                 Empresa
                                 <input
+                                    v-model="quoteForm.company"
                                     name="company"
                                     autocomplete="organization"
                                     placeholder="Nombre de tu empresa"
                                 />
+                                <small
+                                    v-if="quoteForm.errors.company"
+                                    class="husky-form-error"
+                                >
+                                    {{ quoteForm.errors.company }}
+                                </small>
                             </label>
                         </div>
 
@@ -701,30 +933,46 @@ return;
                             <label>
                                 Correo electrónico
                                 <input
+                                    v-model="quoteForm.email"
                                     type="email"
                                     name="email"
                                     autocomplete="email"
                                     placeholder="nombre@empresa.com"
                                     required
                                 />
+                                <small
+                                    v-if="quoteForm.errors.email"
+                                    class="husky-form-error"
+                                >
+                                    {{ quoteForm.errors.email }}
+                                </small>
                             </label>
 
                             <label>
                                 Teléfono
                                 <input
+                                    v-model="quoteForm.phone"
                                     type="tel"
                                     name="phone"
                                     autocomplete="tel"
                                     placeholder="+52"
+                                    required
                                 />
+                                <small
+                                    v-if="quoteForm.errors.phone"
+                                    class="husky-form-error"
+                                >
+                                    {{ quoteForm.errors.phone }}
+                                </small>
                             </label>
                         </div>
 
                         <label>
                             ¿Qué solución necesitas?
+
                             <span class="husky-select-wrap">
                                 <select
-                                    v-model="selectedProduct"
+                                    v-model="selectedItem"
                                     name="interest"
                                     required
                                 >
@@ -732,142 +980,148 @@ return;
                                         Selecciona una opción
                                     </option>
 
-                                    <option
-                                        v-for="product in products"
-                                        :key="product.number"
-                                        :value="product.title"
+                                    <optgroup
+                                        v-if="props.products.length"
+                                        label="Productos"
                                     >
-                                        {{ product.title }}
-                                    </option>
+                                        <option
+                                            v-for="product in props.products"
+                                            :key="`product-${product.id}`"
+                                            :value="`product:${product.id}`"
+                                        >
+                                            {{ product.name }}
+                                        </option>
+                                    </optgroup>
 
-                                    <option value="Impregnación a vacío-presión">
-                                        Impregnación a vacío-presión
-                                    </option>
-
-                                    <option value="Procesamiento y maquila">
-                                        Procesamiento y maquila
-                                    </option>
-
-                                    <option
-                                        value="Planeación, ingeniería e instalación"
+                                    <optgroup
+                                        v-if="props.services.length"
+                                        label="Servicios"
                                     >
-                                        Planeación, ingeniería e instalación
-                                    </option>
+                                        <option
+                                            v-for="service in props.services"
+                                            :key="`service-${service.id}`"
+                                            :value="`service:${service.id}`"
+                                        >
+                                            {{ service.name }}
+                                        </option>
+                                    </optgroup>
 
-                                    <option
-                                        value="Secado artificial y asesoría técnica"
-                                    >
-                                        Secado artificial y asesoría técnica
-                                    </option>
-
-                                    <option value="Otro proyecto">
+                                    <option value="other">
                                         Otro proyecto
                                     </option>
                                 </select>
 
                                 <ChevronDown :size="16" />
                             </span>
+
+                            <small
+                                v-if="quoteForm.errors.product_id"
+                                class="husky-form-error"
+                            >
+                                {{ quoteForm.errors.product_id }}
+                            </small>
+
+                            <small
+                                v-if="quoteForm.errors.service_id"
+                                class="husky-form-error"
+                            >
+                                {{ quoteForm.errors.service_id }}
+                            </small>
+
+                            <small
+                                v-if="quoteForm.errors.item_name"
+                                class="husky-form-error"
+                            >
+                                {{ quoteForm.errors.item_name }}
+                            </small>
                         </label>
 
                         <label>
                             Cuéntanos un poco más
                             <textarea
+                                v-model="quoteForm.description"
                                 name="message"
                                 rows="4"
                                 placeholder="Producto, medidas, volumen, ubicación o fecha estimada…"
                             />
+                            <small
+                                v-if="quoteForm.errors.description"
+                                class="husky-form-error"
+                            >
+                                {{ quoteForm.errors.description }}
+                            </small>
                         </label>
 
                         <button
                             class="husky-button husky-button-solid husky-submit"
                             type="submit"
+                            :disabled="quoteForm.processing"
                         >
-                            Preparar solicitud
-                            <ArrowRight :size="17" />
-                        </button>
+                            {{
+                                quoteForm.processing
+                                    ? 'Enviando solicitud...'
+                                    : 'Enviar solicitud'
+                            }}
 
-                        <p
-                            v-if="formSent"
-                            class="husky-form-feedback"
-                            role="status"
-                        >
-                            Se está abriendo tu aplicación de correo. Revisa el
-                            mensaje antes de enviarlo.
-                        </p>
+                            <ArrowRight
+                                v-if="!quoteForm.processing"
+                                :size="17"
+                            />
+                        </button>
                     </form>
                 </div>
             </section>
         </main>
 
-        <!-- PIE DE PÁGINA -->
-        <footer class="husky-footer">
-            <div class="husky-container husky-footer-main">
-                <a
-                    class="husky-brand husky-brand-light"
-                    href="#inicio"
-                    aria-label="Husky Industrias, inicio"
-                >
-                    <img
-                        class="husky-brand-logo husky-brand-logo-white"
-                        src="/images/husky_blanco.webp"
-                        alt="Industrias Husky"
-                        loading="lazy"
+        <HuskyFooter />
+
+        <!-- TOAST DE NOTIFICACIÓN -->
+        <Transition name="husky-toast">
+            <div
+                v-if="toastVisible"
+                class="husky-toast"
+                :class="`husky-toast-${toastType}`"
+                role="status"
+                aria-live="polite"
+            >
+                <span class="husky-toast-icon">
+                    <CheckCircle2
+                        v-if="toastType === 'success'"
+                        :size="22"
                     />
-                </a>
+                    <X
+                        v-else
+                        :size="22"
+                    />
+                </span>
 
-                <nav aria-label="Navegación del pie de página">
-                    <a href="#productos">Productos</a>
-                    <a href="#servicios">Servicios</a>
-                    <a href="#proyectos">Aplicaciones</a>
-                    <a href="#clientes">Clientes</a>
-                    <a href="#nosotros">Nosotros</a>
-                    <a href="#contacto">Contacto</a>
-                </nav>
-
-                <!-- REDES SOCIALES EN FOOTER -->
-                <div class="husky-footer-social">
-                    <a
-                        href="https://www.facebook.com/industriashusky"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Facebook de Industrias Husky"
-                        title="Facebook"
-                    >
-                        <Facebook :size="19" />
-                    </a>
-
-                    <a
-                        href="https://www.instagram.com/industrias.husky/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram de Industrias Husky"
-                        title="Instagram"
-                    >
-                        <Instagram :size="19" />
-                    </a>
+                <div class="husky-toast-content">
+                    <strong>
+                        {{
+                            toastType === 'success'
+                                ? '¡Solicitud enviada!'
+                                : 'No se pudo enviar'
+                        }}
+                    </strong>
+                    <p>{{ toastMessage }}</p>
                 </div>
 
-                <a class="husky-back-top" href="#inicio">
-                    Volver arriba ↑
-                </a>
+                <button
+                    type="button"
+                    class="husky-toast-close"
+                    aria-label="Cerrar notificación"
+                    @click="closeToast"
+                >
+                    <X :size="17" />
+                </button>
             </div>
-
-            <div class="husky-container husky-footer-bottom">
-                <span>
-                    © {{ year }} Industrias Husky. Todos los derechos reservados.
-                </span>
-
-                <span>
-                    Hecho para construir a largo plazo.
-                    <Leaf :size="14" />
-                </span>
-            </div>
-        </footer>
+        </Transition>
 
         <!-- WHATSAPP -->
         <a
+            v-if="whatsappUrl"
             class="husky-whatsapp"
-            href="https://wa.me/526188357186?text=Hola%2C%20me%20gustar%C3%ADa%20solicitar%20informaci%C3%B3n%20sobre%20sus%20productos%20y%20servicios."
+            :href="whatsappUrl"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Contactar a Industrias Husky por WhatsApp"
@@ -889,48 +1143,5 @@ return;
                 ¿Hablamos de tu proyecto?
             </span>
         </a>
-
-        <!-- MODAL DE PRESENTACIÓN -->
-        <div
-            v-if="videoOpen"
-            class="husky-video-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="husky-video-title"
-            @click.self="videoOpen = false"
-            @keydown.esc="videoOpen = false"
-        >
-            <div class="husky-video-modal-panel">
-                <button
-                    class="husky-modal-close"
-                    type="button"
-                    aria-label="Cerrar"
-                    @click="videoOpen = false"
-                >
-                    <X :size="22" />
-                </button>
-
-                <p class="husky-eyebrow">HUSKY INDUSTRIAS</p>
-
-                <h2 id="husky-video-title">
-                    Una mirada a nuestra experiencia.
-                </h2>
-
-                <p>
-                    Aquí podemos integrar el video corporativo o las tomas de dron
-                    de las instalaciones. Cuando tengas el video final, se puede
-                    reproducir en este espacio.
-                </p>
-
-                <a
-                    class="husky-button husky-button-solid"
-                    href="#contacto"
-                    @click="videoOpen = false"
-                >
-                    Solicitar información
-                    <ArrowRight :size="17" />
-                </a>
-            </div>
-        </div>
     </div>
 </template>

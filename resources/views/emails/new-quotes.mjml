@@ -1,0 +1,249 @@
+
+<mjml>
+  <mj-head>
+    <mj-title>Nueva cotización | Industrias Husky</mj-title>
+    <mj-preview>Se ha recibido una nueva solicitud de cotización.</mj-preview>
+
+    <mj-attributes>
+      <mj-all
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+      />
+      <mj-text
+        font-weight="400"
+        font-size="15px"
+        color="#526158"
+        line-height="24px"
+      />
+      <mj-section padding="0" />
+      <mj-column padding="0" />
+    </mj-attributes>
+
+    <mj-style inline="inline">
+      .footer-link {
+        color: #737d43;
+        text-decoration: none;
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#f2f5f2" width="600px">
+
+    <!-- CABECERA -->
+  <mj-section
+    background-color="#34463a"
+    padding="26px 30px"
+  >
+    <mj-column width="100%">
+      <mj-image
+        src="https://husky.test/images/husky_blanco.webp"
+        alt="Industrias Husky"
+        align="center"
+        width="145px"
+        padding="0"
+      />
+    </mj-column>
+  </mj-section>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <mj-section
+      background-color="#ffffff"
+      padding="36px 35px 10px"
+    >
+      <mj-column width="100%">
+
+        <mj-text
+          color="#737d43"
+          font-size="11px"
+          font-weight="bold"
+          letter-spacing="1.5px"
+          padding="0 0 10px"
+        >
+          NUEVA SOLICITUD DE COTIZACIÓN
+        </mj-text>
+
+        <mj-text
+          color="#243b30"
+          font-size="25px"
+          font-weight="bold"
+          line-height="32px"
+          padding="0 0 12px"
+        >
+          Se ha recibido una nueva cotización.
+        </mj-text>
+
+        <mj-text padding="0 0 22px">
+          Se ha registrado una nueva solicitud a través del sitio web
+          de Industrias Husky. A continuación, encontrarás los datos
+          proporcionados por el cliente.
+        </mj-text>
+
+        <mj-divider
+          border-color="#e5ebe5"
+          border-width="1px"
+          padding="0 0 22px"
+        />
+
+      </mj-column>
+    </mj-section>
+
+    <!-- INFORMACIÓN DEL CLIENTE -->
+    <mj-section
+      background-color="#ffffff"
+      padding="0 35px 22px"
+    >
+      <mj-column width="100%">
+
+        <mj-text
+          color="#243b30"
+          font-size="17px"
+          font-weight="bold"
+          padding="0 0 12px"
+        >
+          Información del cliente
+        </mj-text>
+
+        <mj-text padding="0 0 5px">
+          <strong>Nombre:</strong> {{ $quote->name }}
+        </mj-text>
+
+        <mj-text padding="0 0 5px">
+          <strong>Correo electrónico:</strong> {{ $quote->email }}
+        </mj-text>
+
+        <mj-text padding="0 0 5px">
+          <strong>Teléfono:</strong> {{ $quote->phone }}
+        </mj-text>
+
+        <mj-text padding="0 0 5px">
+          <strong>Empresa:</strong> {{ $quote->company ?? 'No especificada' }}
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- DETALLES DE LA SOLICITUD -->
+    <mj-section
+      background-color="#ffffff"
+      padding="0 35px 25px"
+    >
+      <mj-column width="100%">
+
+        <mj-divider
+          border-color="#e5ebe5"
+          border-width="1px"
+          padding="0 0 22px"
+        />
+
+        <mj-text
+          color="#243b30"
+          font-size="17px"
+          font-weight="bold"
+          padding="0 0 12px"
+        >
+          Detalles de la solicitud
+        </mj-text>
+
+        <mj-text padding="0 0 8px">
+          <strong>Folio:</strong> {{ $quote->folio }}
+        </mj-text>
+
+        <mj-text padding="0 0 8px">
+          <strong>Fecha:</strong> {{ $quote->created_at->format('d/m/Y H:i') }}
+        </mj-text>
+
+        <mj-text padding="0 0 8px">
+          <strong>Estado:</strong> Pendiente
+        </mj-text>
+
+        <mj-text padding="0 0 5px">
+          <strong>Descripción:</strong>
+        </mj-text>
+
+        <mj-text
+          background-color="#f5f7f4"
+          color="#526158"
+          padding="15px"
+          border-left="3px solid #737d43"
+        >
+          {{ $quote->description }}
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- BOTÓN -->
+    <mj-section
+      background-color="#ffffff"
+      padding="5px 35px 35px"
+    >
+      <mj-column width="100%">
+
+        <mj-text padding="0 0 15px">
+          Ingresa al panel administrativo para consultar la solicitud
+          y dar seguimiento al proceso de cotización.
+        </mj-text>
+
+        <mj-button
+          background-color="#34463a"
+          color="#ffffff"
+          font-size="14px"
+          font-weight="bold"
+          border-radius="5px"
+          inner-padding="14px 28px"
+          align="left"
+          href="{{ $quoteUrl }}"
+        >
+          Consultar cotización
+        </mj-button>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- PIE DE CORREO -->
+    <mj-section
+      background-color="#f1eee8"
+      padding="25px 30px"
+    >
+      <mj-column width="100%">
+
+        <mj-text
+          align="center"
+          color="#243b30"
+          font-size="13px"
+          font-weight="bold"
+          letter-spacing="1px"
+          padding="0 0 5px"
+        >
+          INDUSTRIAS HUSKY
+        </mj-text>
+
+        <mj-divider
+          border-color="#dedfd5"
+          padding="5px 0 10px"
+        />
+
+        <mj-text
+          align="center"
+          color="#929b92"
+          font-size="11px"
+          line-height="18px"
+          padding="0"
+        >
+          Este correo es una notificación automática del sistema
+          de Industrias Husky. Por favor, no respondas a este mensaje.
+        </mj-text>
+
+        <mj-text
+          align="center"
+          color="#929b92"
+          font-size="11px"
+          padding="10px 0 0"
+        >
+          &copy; {{ date('Y') }} Industrias Husky. Todos los derechos reservados.
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

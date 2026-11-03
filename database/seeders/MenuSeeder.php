@@ -13,6 +13,126 @@ class MenuSeeder extends Seeder
     {
         /*
         |--------------------------------------------------------------------------
+        | Catálogo
+        |--------------------------------------------------------------------------
+        */
+
+        $catalog = Menu::updateOrCreate(
+            ['name' => 'Catálogo'],
+            [
+                'icon' => 'Boxes',
+                'order' => 1,
+                'route' => null,
+                'is_submenu' => true,
+            ]
+        );
+
+        $this->link(
+            $catalog,
+            'Productos',
+            'Package',
+            1,
+            'admin.products.index',
+            'products.view'
+        );
+
+        $this->link(
+            $catalog,
+            'Servicios',
+            'Wrench',
+            2,
+            'admin.services.index',
+            'services.view'
+        );
+
+        $this->link(
+            $catalog,
+            'Proyectos',
+            'FolderKanban',
+            3,
+            'admin.projects.index',
+            'projects.view'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Contenido
+        |--------------------------------------------------------------------------
+        */
+
+        $content = Menu::updateOrCreate(
+            ['name' => 'Contenido'],
+            [
+                'icon' => 'FileText',
+                'order' => 2,
+                'route' => null,
+                'is_submenu' => true,
+            ]
+        );
+
+        $this->link(
+            $content,
+            'Nosotros',
+            'Building',
+            1,
+            'admin.about.index',
+            'about.view'
+        );
+
+        $this->link(
+            $content,
+            'Banners',
+            'PanelsTopLeft',
+            2,
+            'admin.banners.index',
+            'banners.view'
+        );
+
+        $this->link(
+            $content,
+            'Contacto',
+            'Contact',
+            3,
+            'admin.contact.index',
+            'contact.view'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Comercial
+        |--------------------------------------------------------------------------
+        */
+
+        $commercial = Menu::updateOrCreate(
+            ['name' => 'Comercial'],
+            [
+                'icon' => 'BriefcaseBusiness',
+                'order' => 3,
+                'route' => null,
+                'is_submenu' => true,
+            ]
+        );
+
+        $this->link(
+            $commercial,
+            'Clientes',
+            'Users',
+            1,
+            'admin.clients.index',
+            'clients.view'
+        );
+
+        $this->link(
+            $commercial,
+            'Cotizaciones',
+            'ClipboardList',
+            2,
+            'admin.quotes.index',
+            'quotes.view'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
         | Configuración
         |--------------------------------------------------------------------------
         */
@@ -21,7 +141,7 @@ class MenuSeeder extends Seeder
             ['name' => 'Configuración'],
             [
                 'icon' => 'Settings',
-                'order' => 1,
+                'order' => 4,
                 'route' => null,
                 'is_submenu' => true,
             ]

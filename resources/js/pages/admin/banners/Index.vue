@@ -1,6 +1,6 @@
 
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import {
     FilterX,
     Image as ImageIcon,
@@ -120,6 +120,10 @@ const imageUrl = (path: string | null) => {
     return `/storage/${path}`
 }
 
+// Detectar si el archivo es un video
+const isVideo = (path: string | null) =>
+    Boolean(path && /\.(mp4|webm|mov)$/i.test(path))
+
 const deleteBanner = (banner: Banner) => {
     Swal.fire({
         title: '¿Eliminar banner?',
@@ -212,18 +216,23 @@ defineOptions({
                     <th class="px-5 py-4 font-semibold sm:px-6">
                         Banner
                     </th>
+
                     <th class="px-5 py-4 font-semibold sm:px-6">
                         Posición
                     </th>
+
                     <th class="px-5 py-4 text-center font-semibold sm:px-6">
                         Orden
                     </th>
+
                     <th class="px-5 py-4 font-semibold sm:px-6">
                         Estado
                     </th>
+
                     <th class="px-5 py-4 font-semibold sm:px-6">
                         Publicación
                     </th>
+
                     <th class="px-5 py-4 text-right font-semibold sm:px-6">
                         Acciones
                     </th>
@@ -236,17 +245,31 @@ defineOptions({
                     :key="banner.id"
                     class="transition-colors hover:bg-[#F6F9F6]"
                 >
+                    <!-- BANNER Y MINIATURA -->
                     <td class="px-5 py-4 sm:px-6">
                         <div class="flex min-w-[220px] items-center gap-3">
                             <div
                                 class="h-14 w-24 shrink-0 overflow-hidden rounded-lg border border-[#DCE7DF] bg-[#F2F7F4]"
                             >
+                                <!-- MINIATURA DE VIDEO -->
+                                <video
+                                    v-if="isVideo(banner.image)"
+                                    :src="imageUrl(banner.image) ?? ''"
+                                    class="h-full w-full object-cover"
+                                    muted
+                                    playsinline
+                                    preload="metadata"
+                                />
+
+                                <!-- MINIATURA DE IMAGEN -->
                                 <img
-                                    v-if="imageUrl(banner.image)"
+                                    v-else-if="imageUrl(banner.image)"
                                     :src="imageUrl(banner.image) ?? ''"
                                     :alt="banner.alt_text || banner.title"
                                     class="h-full w-full object-cover"
                                 />
+
+                                <!-- SIN ARCHIVO -->
                                 <div
                                     v-else
                                     class="flex h-full items-center justify-center text-[#718277]"
@@ -259,12 +282,14 @@ defineOptions({
                                 <p class="font-semibold text-[#244334]">
                                     {{ banner.title }}
                                 </p>
+
                                 <p
                                     v-if="banner.subtitle"
                                     class="mt-0.5 max-w-xs truncate text-xs text-[#718277]"
                                 >
                                     {{ banner.subtitle }}
                                 </p>
+
                                 <p class="mt-1 text-xs text-[#87958B]">
                                     ID: {{ banner.id }}
                                 </p>
@@ -272,6 +297,7 @@ defineOptions({
                         </div>
                     </td>
 
+                    <!-- POSICIÓN -->
                     <td class="px-5 py-4 sm:px-6">
                         <span
                             class="inline-flex rounded-full border border-[#DCE7DF] bg-[#F6F9F6] px-2.5 py-1 text-xs font-medium text-[#385644]"
@@ -280,6 +306,7 @@ defineOptions({
                         </span>
                     </td>
 
+                    <!-- ORDEN -->
                     <td class="px-5 py-4 text-center sm:px-6">
                         <span
                             class="inline-flex h-8 min-w-8 items-center justify-center rounded-lg bg-[#E4F2E8] px-2 font-semibold text-[#187744]"
@@ -288,6 +315,7 @@ defineOptions({
                         </span>
                     </td>
 
+                    <!-- ESTADO -->
                     <td class="whitespace-nowrap px-5 py-4 sm:px-6">
                         <span
                             v-if="banner.is_active"
@@ -306,12 +334,14 @@ defineOptions({
                         </span>
                     </td>
 
+                    <!-- PUBLICACIÓN -->
                     <td class="px-5 py-4 sm:px-6">
                         <div class="min-w-[130px] text-xs text-[#52665A]">
                             <p>
                                 Inicio:
                                 {{ banner.starts_at || 'Sin programar' }}
                             </p>
+
                             <p class="mt-1">
                                 Fin:
                                 {{ banner.ends_at || 'Sin vencimiento' }}
@@ -319,6 +349,7 @@ defineOptions({
                         </div>
                     </td>
 
+                    <!-- ACCIONES -->
                     <TableActions
                         :edit-url="admin.banners.edit(banner.id).url"
                         :show-view="false"
@@ -328,6 +359,7 @@ defineOptions({
                 </tr>
             </template>
 
+            <!-- ESTADO VACÍO -->
             <template #empty>
                 <div class="flex flex-col items-center justify-center gap-3 py-8">
                     <div
@@ -340,6 +372,7 @@ defineOptions({
                         <p class="font-medium text-[#244334]">
                             No se encontraron banners
                         </p>
+
                         <p class="mt-1 text-sm text-[#718277]">
                             {{
                                 hasFilters()
