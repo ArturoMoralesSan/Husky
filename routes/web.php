@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,8 @@ Route::get('/quotes/options', [QuoteController::class, 'options'])->name('quotes
 Route::post('/quotes', [QuoteController::class, 'store'])
     ->name('quotes.store');
 
+Route::get('/preguntas-frecuentes', [HomeController::class, 'faqs'])
+    ->name('faqs.index');
 /*
 |--------------------------------------------------------------------------
 | Administración
@@ -221,7 +224,16 @@ Route::middleware(['auth', 'verified'])
             ->middleware('permission:quotes.edit')
             ->name('quotes.update-status');
 
-                
+           Route::resource('faqs', FaqController::class)
+            ->middleware([
+                'index' => 'permission:faqs.view',
+                'create' => 'permission:faqs.create',
+                'store' => 'permission:faqs.create',
+                'edit' => 'permission:faqs.edit',
+                'update' => 'permission:faqs.edit',
+                'destroy' => 'permission:faqs.delete',
+            ]);
+     
     });
 
 

@@ -9,207 +9,239 @@ use App\Models\Contact;
 use App\Models\Product;
 use App\Models\Project;
 use App\Models\Service;
+use App\Models\Faq;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(): Response
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | Banner principal
-        |--------------------------------------------------------------------------
-        */
+    
+public function index(): Response
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Banner principal
+    |--------------------------------------------------------------------------
+    */
 
-        $banner = Banner::query()
-            ->where('position', 'home')
-            ->where('is_active', true)
-            ->where(function ($query) {
-                $query->whereNull('starts_at')
-                    ->orWhere('starts_at', '<=', now());
-            })
-            ->where(function ($query) {
-                $query->whereNull('ends_at')
-                    ->orWhere('ends_at', '>=', now());
-            })
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->first();
+    $banner = Banner::query()
+        ->where('position', 'home')
+        ->where('is_active', true)
+        ->where(function ($query) {
+            $query->whereNull('starts_at')
+                ->orWhere('starts_at', '<=', now());
+        })
+        ->where(function ($query) {
+            $query->whereNull('ends_at')
+                ->orWhere('ends_at', '>=', now());
+        })
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->first();
 
-        if ($banner) {
-            $banner->image_url = Storage::disk('public')
-                ->url($banner->image);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Productos
-        |--------------------------------------------------------------------------
-        */
-
-        $products = Product::query()
-            ->with(['gallery.images'])
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->limit(5)
-            ->get([
-                'id',
-                'name',
-                'slug',
-                'short_description',
-            ])
-            ->map(function (Product $product) {
-                $images = $product->gallery?->images ?? collect();
-
-                $image = $images->firstWhere('is_primary', true);
-
-                if (!$image) {
-                    $image = $images->first();
-                }
-
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'short_description' => $product->short_description,
-                    'image_url' => $image
-                        ? Storage::disk('public')->url($image->file)
-                        : null,
-                    'image_alt' => $image?->alt ?: $product->name,
-                ];
-            })
-            ->values();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Servicios
-        |--------------------------------------------------------------------------
-        */
-
-        $services = Service::query()
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->limit(5)
-            ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Proyectos
-        |--------------------------------------------------------------------------
-        */
-
-        $projects = Project::query()
-            ->with(['gallery.images'])
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->limit(5)
-            ->get([
-                'id',
-                'name',
-                'slug',
-                'description',
-            ])
-            ->map(function (Project $project) {
-                $images = $project->gallery?->images ?? collect();
-
-                $image = $images->firstWhere('is_primary', true);
-
-                if (!$image) {
-                    $image = $images->first();
-                }
-
-                return [
-                    'id' => $project->id,
-                    'name' => $project->name,
-                    'slug' => $project->slug,
-                    'short_description' => $project->description,
-                    'image_url' => $image
-                        ? Storage::disk('public')->url($image->file)
-                        : null,
-                    'image_alt' => $image?->alt ?: $project->name,
-                ];
-            })
-            ->values();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Acerca de nosotros
-            |--------------------------------------------------------------------------
-            */
-
-            $about = About::query()
-                ->with(['gallery.images'])
-                ->first();
-
-            if ($about) {
-                $images = $about->gallery?->images ?? collect();
-
-                $about = [
-                    'id' => $about->id,
-                    'history' => $about->history,
-                    'gallery_images' => $images
-                        ->map(function ($image) {
-                            return [
-                                'id' => $image->id,
-                                'file' => $image->file,
-                                'url' => Storage::disk('public')->url($image->file),
-                                'alt' => $image->alt,
-                                'is_primary' => $image->is_primary,
-                                'sort_order' => $image->sort_order,
-                            ];
-                        })
-                        ->values(),
-                ];
-            }
-        /*
-        |--------------------------------------------------------------------------
-        | Clientes
-        |--------------------------------------------------------------------------
-        */
-
-        $clients = Client::query()
-            ->orderBy('id')
-            ->get()
-            ->map(function (Client $client) {
-                return [
-                    'id' => $client->id,
-                    'name' => $client->name,
-                    'logo_url' => $client->logo
-                        ? Storage::disk('public')->url($client->logo)
-                        : null,
-                ];
-            })
-            ->values();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Contacto
-        |--------------------------------------------------------------------------
-        */
-
-        $contact = Contact::query()->first();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Respuesta Inertia
-        |--------------------------------------------------------------------------
-        */
-
-        return Inertia::render('Welcome', [
-            'banner' => $banner,
-            'products' => $products,
-            'services' => $services,
-            'projects' => $projects,
-            'clients' => $clients,
-            'contact' => $contact,
-            'about' => $about,
-        ]);
+    if ($banner) {
+        $banner->image_url = Storage::disk('public')
+            ->url($banner->image);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Productos
+    |--------------------------------------------------------------------------
+    */
+
+    $products = Product::query()
+        ->with([
+            'gallery.images',
+            'variants' => function ($query) {
+                $query->where('is_active', true)
+                    ->orderBy('sort_order')
+                    ->orderBy('id');
+            },
+        ])
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->limit(4)
+        ->get([
+            'id',
+            'name',
+            'slug',
+            'short_description',
+            'material',
+            'treatment',
+            'retention',
+            'retention_unit',
+        ])
+        ->map(function (Product $product) {
+            $images = $product->gallery?->images ?? collect();
+
+            $image = $images->firstWhere('is_primary', true)
+                ?? $images->first();
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'short_description' => $product->short_description,
+
+                'material' => $product->material,
+                'treatment' => $product->treatment,
+                'retention' => $product->retention,
+                'retention_unit' => $product->retention_unit,
+
+                'image_url' => $image
+                    ? Storage::disk('public')->url($image->file)
+                    : null,
+
+                'image_alt' => $image?->alt ?: $product->name,
+
+                'variants' => $product->variants
+                    ->map(function ($variant) {
+                        return [
+                            'id' => $variant->id,
+                            'name' => $variant->name,
+                        ];
+                    })
+                    ->values(),
+            ];
+        })
+        ->values();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Servicios
+    |--------------------------------------------------------------------------
+    */
+
+    $services = Service::query()
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->limit(4)
+        ->get();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Proyectos
+    |--------------------------------------------------------------------------
+    */
+
+    $projects = Project::query()
+        ->with(['gallery.images'])
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->limit(5)
+        ->get([
+            'id',
+            'name',
+            'slug',
+            'description',
+        ])
+        ->map(function (Project $project) {
+            $images = $project->gallery?->images ?? collect();
+
+            $image = $images->firstWhere('is_primary', true);
+
+            if (!$image) {
+                $image = $images->first();
+            }
+
+            return [
+                'id' => $project->id,
+                'name' => $project->name,
+                'slug' => $project->slug,
+                'short_description' => $project->description,
+
+                'image_url' => $image
+                    ? Storage::disk('public')->url($image->file)
+                    : null,
+
+                'image_alt' => $image?->alt ?: $project->name,
+            ];
+        })
+        ->values();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acerca de nosotros
+    |--------------------------------------------------------------------------
+    */
+
+    $about = About::query()
+        ->with(['gallery.images'])
+        ->first();
+
+    if ($about) {
+        $images = $about->gallery?->images ?? collect();
+
+        $about = [
+            'id' => $about->id,
+            'history' => $about->history,
+
+            'gallery_images' => $images
+                ->map(function ($image) {
+                    return [
+                        'id' => $image->id,
+                        'file' => $image->file,
+                        'url' => Storage::disk('public')->url($image->file),
+                        'alt' => $image->alt,
+                        'is_primary' => $image->is_primary,
+                        'sort_order' => $image->sort_order,
+                    ];
+                })
+                ->values(),
+        ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clientes
+    |--------------------------------------------------------------------------
+    */
+
+    $clients = Client::query()
+        ->orderBy('id')
+        ->get()
+        ->map(function (Client $client) {
+            return [
+                'id' => $client->id,
+                'name' => $client->name,
+
+                'logo_url' => $client->logo
+                    ? Storage::disk('public')->url($client->logo)
+                    : null,
+            ];
+        })
+        ->values();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contacto
+    |--------------------------------------------------------------------------
+    */
+
+    $contact = Contact::query()->first();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Respuesta Inertia
+    |--------------------------------------------------------------------------
+    */
+
+    return Inertia::render('Welcome', [
+        'banner' => $banner,
+        'products' => $products,
+        'services' => $services,
+        'projects' => $projects,
+        'clients' => $clients,
+        'contact' => $contact,
+        'about' => $about,
+    ]);
+}
+
 
     public function nosotros(): Response
     {
@@ -319,7 +351,14 @@ class HomeController extends Controller
         */
 
         $products = Product::query()
-            ->with(['gallery.images'])
+            ->with([
+                'gallery.images',
+                'variants' => function ($query) {
+                    $query->where('is_active', true)
+                        ->orderBy('sort_order')
+                        ->orderBy('id');
+                },
+            ])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('id')
@@ -332,11 +371,8 @@ class HomeController extends Controller
             ->map(function (Product $product) {
                 $images = $product->gallery?->images ?? collect();
 
-                $image = $images->firstWhere('is_primary', true);
-
-                if (!$image) {
-                    $image = $images->first();
-                }
+                $image = $images->firstWhere('is_primary', true)
+                    ?? $images->first();
 
                 return [
                     'id' => $product->id,
@@ -347,6 +383,16 @@ class HomeController extends Controller
                         ? Storage::disk('public')->url($image->file)
                         : null,
                     'imageAlt' => $image?->alt ?: $product->name,
+
+                    // Variantes activas del producto.
+                    'variants' => $product->variants
+                        ->map(function ($variant) {
+                            return [
+                                'id' => $variant->id,
+                                'name' => $variant->name,
+                            ];
+                        })
+                        ->values(),
                 ];
             })
             ->values();
@@ -362,6 +408,7 @@ class HomeController extends Controller
             'products' => $products,
         ]);
     }
+
 
     public function services(): Response
     {
@@ -400,6 +447,7 @@ class HomeController extends Controller
         $services = Service::query()
             ->with(['gallery.images'])
             ->where('is_active', true)
+            ->whereIn('category', ['proyectos', 'maquila'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get([
@@ -407,6 +455,7 @@ class HomeController extends Controller
                 'name',
                 'slug',
                 'description',
+                'category',
             ])
             ->map(function (Service $service) {
                 $images = $service->gallery?->images ?? collect();
@@ -421,16 +470,30 @@ class HomeController extends Controller
                     'id' => $service->id,
                     'slug' => $service->slug,
                     'title' => $service->name,
+                    'category' => $service->category,
                     'description' => $service->description,
                     'image' => $image
                         ? Storage::disk('public')->url($image->file)
                         : null,
                     'imageAlt' => $image?->alt ?: $service->name,
                 ];
-            })
-            ->values();
+            });
 
         /*
+        |--------------------------------------------------------------------------
+        | Separación por Categoría
+        |--------------------------------------------------------------------------
+        */
+
+        $projects = $services
+            ->where('category', 'proyectos')
+            ->values();
+
+        $maquila = $services
+            ->where('category', 'maquila')
+            ->values();
+
+            /*
         |--------------------------------------------------------------------------
         | Respuesta Inertia
         |--------------------------------------------------------------------------
@@ -438,7 +501,8 @@ class HomeController extends Controller
 
         return Inertia::render('Services', [
             'banner' => $banner,
-            'services' => $services,
+            'projects' => $projects,
+            'maquila' => $maquila,
         ]);
     }
 
@@ -698,6 +762,24 @@ class HomeController extends Controller
                 'gallery' => $gallery,
                 'main_image' => $primaryImage['url'] ?? $gallery->first()['url'] ?? null,
             ],
+        ]);
+    }
+
+    public function faqs(): Response
+    {
+        $faqs = Faq::query()
+            ->active()
+            ->ordered()
+            ->get([
+                'id',
+                'question',
+                'answer',
+                'category',
+                'sort_order',
+            ]);
+
+        return Inertia::render('Faqs', [
+            'faqs' => $faqs,
         ]);
     }
 }

@@ -39,6 +39,11 @@ interface Banner {
     open_in_new_tab: boolean
 }
 
+interface ProductVariant {
+    id: number
+    name: string
+}
+
 interface Product {
     id: number
     name: string
@@ -46,6 +51,7 @@ interface Product {
     short_description: string | null
     image_url: string | null
     image_alt: string
+    variants: ProductVariant[]
 }
 
 interface Service {
@@ -324,7 +330,7 @@ function submitQuote() {
 // NAVEGACIÓN A PRODUCTOS
 // -----------------------------------------------------------------------------
 
-function openProduct(product: { slug: string }) {
+function openProduct(product: { slug?: string }) {
     if (!product.slug) return
 
     router.visit(`/productos/${product.slug}`)
@@ -344,6 +350,9 @@ const products = computed(() =>
         description: product.short_description || '',
         image: product.image_url,
         imageAlt: product.image_alt || product.name,
+
+        // Variantes enviadas desde HomeController.
+        variants: product.variants ?? [],
     })),
 )
 
@@ -741,6 +750,84 @@ function phoneUrl(phone: string) {
                     </div>
                 </div>
             </section>
+            <!-- MARCAS CON LAS QUE TRABAJAMOS -->
+            <section
+                id="marcas"
+                class="husky-clients"
+                aria-labelledby="partner-brands-title"
+            >
+                <div class="husky-partner-brands-heading">
+                    <h2 id="partner-brands-title">
+                        Marcas que complementan nuestras soluciones.
+                    </h2>
+                </div>
+
+                <div class="husky-partner-brands-grid">
+                    <!-- CAMO FASTENERS -->
+                    <a
+                        href="https://www.camofasteners.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="husky-partner-brand husky-partner-brand-camo"
+                        aria-label="Conocer CAMO Fasteners, abre en una nueva pestaña"
+                    >
+                        <span class="husky-partner-brand-kicker">
+                            PIJAS Y SISTEMAS DE FIJACIÓN
+                        </span>
+
+                        <img
+                            src="https://www.camofasteners.com/assets/images/logo.svg"
+                            alt="CAMO Fasteners"
+                            class="husky-partner-brand-logo husky-partner-brand-logo-camo"
+                            loading="lazy"
+                            decoding="async"
+                        />
+
+                        <span class="husky-partner-brand-description">
+                            Pijas, sujetadores y herramientas especializadas
+                            para lograr una fijación precisa y resistente
+                            en proyectos de madera.
+                        </span>
+
+                        <span class="husky-partner-brand-link">
+                            Conocer CAMO
+                            <ArrowUpRight :size="17" />
+                        </span>
+                    </a>
+
+                    <!-- NORWOOD SAWMILLS -->
+                    <a
+                        href="https://norwoodsawmills.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="husky-partner-brand husky-partner-brand-norwood"
+                        aria-label="Conocer Norwood Sawmills, abre en una nueva pestaña"
+                    >
+                        <span class="husky-partner-brand-kicker">
+                            ASERRADEROS PORTÁTILES
+                        </span>
+
+                        <img
+                            src="https://norwoodsawmills.com/cdn/shop/files/norwood_logo_3.svg?v=1759519181&amp;width=110"
+                            alt="Norwood Sawmills"
+                            class="husky-partner-brand-logo husky-partner-brand-logo-norwood"
+                            loading="lazy"
+                            decoding="async"
+                        />
+
+                        <span class="husky-partner-brand-description">
+                            Aserraderos portátiles y equipos diseñados para
+                            cortar, procesar y aprovechar la madera directamente
+                            en el lugar de trabajo.
+                        </span>
+
+                        <span class="husky-partner-brand-link">
+                            Conocer Norwood
+                            <ArrowUpRight :size="17" />
+                        </span>
+                    </a>
+                </div>
+            </section>
 
             <!-- CONTACTO -->
             <section id="contacto" class="husky-contact husky-section">
@@ -1135,7 +1222,7 @@ function phoneUrl(phone: string) {
                 aria-hidden="true"
             >
                 <path
-                    d="M16.04 3C8.88 3 3.05 8.81 3.05 15.95c0 2.28.6 4.5 1.73 6.46L3 29l6.78-1.77a13.1 13.1 0 0 0 6.25 1.59h.01c7.15 0 12.98-5.81 12.98-12.96A12.9 12.9 0 0 0 16.04 3Zm0 23.64c-1.95 0-3.87-.53-5.54-1.53l-.4-.24-4.02 1.05 1.07-3.91-.26-.41a10.63 10.63 0 0 1-1.64-5.65c0-5.95 4.84-10.79 10.8-10.79 2.88 0 5.59 1.12 7.62 3.16a10.72 10.72 0 0 1 3.16 7.63c0 5.95-4.84 10.79-10.79 10.79Zm5.92-8.08c-.32-.16-1.9-.94-2.2-1.05-.3-.11-.51-.16-.72.16-.21.32-.83 1.05-1.02 1.26-.19.21-.38.24-.7.08-.32-.16-1.35-.5-2.57-1.59-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.14-.14.32-.38.48-.56.16-.19.21-.32.32-.54.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.38-.26-.62-.52-.53-.72-.54h-.62c-.21 0-.56.08-.86.4-.3.32-1.13 1.1-1.13 2.68s1.16 3.1 1.32 3.32c.16.21 2.28 3.48 5.53 4.88.77.33 1.37.52 1.84.66.77.24 1.47.21 2.02.13.62-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.14-.3-.22-.62-.38Z"
+                    d="M16.04 3C8.88 3 3.05 8.81 3.05 15.95c0 2.28.6 4.5 1.73 6.46L3 29l6.78-1.77a13.1 13.1 0 0 0 6.25 1.59h.01c7.15 0 12.98-5.81 12.98-12.96A12.9 12.9 0 0 0 16.04 3Zm0 23.64c-1.95 0-3.87-.53-5.54-1.53l-.4-.24-4.02 1.05 1.07-3.91-.26-.41a10.63 10.63 0 0 1-1.64-5.65c0-5.95 4.84-10.79 10.8-10.79 2.88 0 5.59 1.12 7.62 3.16a10.72 10.72 0 0 1 3.16 7.63c0 5.95-4.84 10.79-10.79 10.79Zm5.92-8.08c-.32-.16-1.9-.94-2.2-1.05-.3-.11-.51-.16-.72.16-.21.32-.83 1.05-1.02 1.26-.19.21-.38.24-.7.08-.32-.16-1.35-.5-2.57-1.59-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.14-.14.32-.38.48-.56.16-.19.21-.32.32-.54.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.38-.26-.62-.52-.53-.72-.54h-.62c-.21 0-.56.08-.86.4-.3.32-1.13 1.1-1.13 2.68s1.16 3.1 1.32 3.32c.21.32 2.28 3.48 5.53 4.88.77.33 1.37.52 1.84.66.77.24 1.47.21 2.02.13.62-.09 1.9-.78 2.17-1.53.27-.75.19-1.39.19-1.53-.08-.14-.3-.22-.62-.38Z"
                 />
             </svg>
 
@@ -1145,3 +1232,132 @@ function phoneUrl(phone: string) {
         </a>
     </div>
 </template>
+
+<style scoped>
+.husky-partner-brands {
+    width: 100%;
+    padding: 3.25rem 0 0;
+    overflow: hidden;
+    background: #fffefa;
+}
+
+.husky-partner-brands-heading {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+    text-align: center;
+}
+
+.husky-partner-brands-heading .husky-eyebrow {
+    margin-bottom: 0.65rem;
+}
+
+.husky-partner-brands-heading h2 {
+    margin: 0;
+    color: #25352d;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.husky-partner-brands-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+}
+
+.husky-partner-brand {
+    display: flex;
+    min-height: 285px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.25rem clamp(1.25rem, 4vw, 4rem);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    transition: filter 220ms ease;
+}
+
+.husky-partner-brand:hover {
+    color: #fff;
+    filter: brightness(1.06);
+}
+
+.husky-partner-brand-camo {
+    background: #e87524;
+}
+
+.husky-partner-brand-norwood {
+    background: #34463a;
+}
+
+.husky-partner-brand-kicker {
+    margin-bottom: 0.8rem;
+    color: rgb(255 255 255 / 78%);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+}
+
+.husky-partner-brand-logo {
+    display: block;
+    width: auto;
+    max-width: min(100%, 220px);
+    height: clamp(2.8rem, 4.5vw, 3.6rem);
+    object-fit: contain;
+    object-position: left center;
+}
+
+.husky-partner-brand-logo-camo {
+    max-width: min(100%, 205px);
+}
+
+.husky-partner-brand-logo-norwood {
+    max-width: min(100%, 220px);
+}
+
+.husky-partner-brand-description {
+    max-width: 390px;
+    margin-top: 0.75rem;
+    color: rgb(255 255 255 / 88%);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.husky-partner-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.1rem;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+@media (max-width: 700px) {
+    .husky-partner-brands {
+        padding-top: 2.5rem;
+    }
+
+    .husky-partner-brands-heading {
+        padding-bottom: 1.5rem;
+    }
+
+    .husky-partner-brands-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .husky-partner-brand {
+        min-height: 235px;
+        padding: 2rem 1.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .husky-partner-brand {
+        transition: none;
+    }
+}
+</style>

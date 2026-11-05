@@ -543,6 +543,56 @@ const quotationUrl = computed(
                             </div>
 
                             <div
+                                v-if="product.variants.length"
+                                class="product-inline-variants"
+                            >
+                                <span class="product-inline-variants-label">
+                                    PRESENTACIONES DISPONIBLES
+                                </span>
+
+                                <div class="product-inline-variant-list">
+                                    <button
+                                        v-for="variant in product.variants"
+                                        :key="variant.id"
+                                        type="button"
+                                        class="product-inline-variant"
+                                        :class="{
+                                            'is-active': selectedVariant?.id === variant.id,
+                                        }"
+                                        :aria-pressed="selectedVariant?.id === variant.id"
+                                        @click="selectedVariant = variant"
+                                    >
+                                        {{ variant.name }}
+                                    </button>
+                                </div>
+
+                                <div
+                                    v-if="selectedVariant && (variantDimensions.length || specifications.length)"
+                                    class="product-inline-variant-info"
+                                >
+                                    <div
+                                        v-for="dimension in variantDimensions"
+                                        :key="dimension.label"
+                                        class="product-inline-dimension"
+                                    >
+                                        <span>{{ dimension.label }}</span>
+                                        <strong>
+                                            {{ dimension.value }} {{ dimension.unit || '' }}
+                                        </strong>
+                                    </div>
+
+                                    <div
+                                        v-for="specification in specifications"
+                                        :key="specification.label"
+                                        class="product-inline-dimension"
+                                    >
+                                        <span>{{ specification.label }}</span>
+                                        <strong>{{ specification.value }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
                                 v-if="
                                     product.material ||
                                     product.treatment ||
@@ -619,142 +669,6 @@ const quotationUrl = computed(
                 </div>
             </section>
 
-            <!-- VARIANTES -->
-            <section
-                v-if="product.variants.length"
-                class="product-variants-section"
-            >
-                <div class="husky-container">
-                    <div class="product-section-heading">
-                        <span class="product-eyebrow">
-                            OPCIONES DISPONIBLES
-                        </span>
-
-                        <h2>Variantes y dimensiones</h2>
-
-                        <p>
-                            Selecciona una presentación para consultar sus
-                            dimensiones y especificaciones.
-                        </p>
-                    </div>
-
-                    <div class="product-variants-layout">
-                        <div class="product-variant-list">
-                            <button
-                                v-for="variant in product.variants"
-                                :key="variant.id"
-                                type="button"
-                                class="product-variant-option"
-                                :class="{
-                                    'is-active': selectedVariant?.id === variant.id,
-                                }"
-                                :aria-pressed="selectedVariant?.id === variant.id"
-                                @click="selectedVariant = variant"
-                            >
-                                <span>
-                                    <Ruler :size="18" />
-                                    {{ variant.name }}
-                                </span>
-
-                                <ArrowRight :size="17" />
-                            </button>
-                        </div>
-
-                        <div
-                            v-if="selectedVariant"
-                            class="product-variant-details"
-                        >
-                            <div class="product-variant-heading">
-                                <div>
-                                    <span>VARIANTE SELECCIONADA</span>
-                                    <h3>{{ selectedVariant.name }}</h3>
-                                </div>
-                            </div>
-
-                            <div
-                                v-if="variantDimensions.length"
-                                class="product-dimensions"
-                            >
-                                <div
-                                    v-for="dimension in variantDimensions"
-                                    :key="dimension.label"
-                                    class="product-dimension"
-                                >
-                                    <span>{{ dimension.label }}</span>
-
-                                    <strong>
-                                        {{ dimension.value }}
-                                        {{ dimension.unit || '' }}
-                                    </strong>
-                                </div>
-                            </div>
-
-                            <div
-                                v-if="specifications.length"
-                                class="product-specifications"
-                            >
-                                <h4>Especificaciones adicionales</h4>
-
-                                <div
-                                    v-for="specification in specifications"
-                                    :key="specification.label"
-                                    class="product-specification-row"
-                                >
-                                    <span>{{ specification.label }}</span>
-                                    <strong>{{ specification.value }}</strong>
-                                </div>
-                            </div>
-
-                            <a
-                                :href="quotationUrl"
-                                class="product-variant-quote"
-                            >
-                                Cotizar este producto
-                                <ArrowUpRight :size="17" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- LLAMADA A LA ACCIÓN -->
-            <section class="product-contact-section">
-                <div class="husky-container">
-                    <div class="product-contact-content">
-                        <div>
-                            <span class="product-eyebrow">
-                                HABLEMOS DE TU PROYECTO
-                            </span>
-
-                            <h2>
-                                ¿Necesitas una solución en madera?
-                            </h2>
-
-                            <p>
-                                Estamos listos para ayudarte a encontrar
-                                el producto adecuado para tus necesidades.
-                            </p>
-                        </div>
-
-                        <a
-                            :href="quotationUrl"
-                            class="product-contact-button"
-                        >
-                            Solicitar cotización
-                            <ArrowUpRight :size="19" />
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="product-back-section">
-                <div class="husky-container">
-                    <Link href="/productos" class="product-back-link">
-                        <ArrowLeft :size="17" />
-                        Volver a todos los productos
-                    </Link>
-                </div>
-            </section>
         </main>
 
         <!-- VISOR DE GALERÍA -->
@@ -1172,156 +1086,80 @@ const quotationUrl = computed(
     text-align: center;
 }
 
-/* VARIANTES */
+/* VARIANTES COMPACTAS */
 
-.product-variants-section {
-    padding: 88px 0;
-    background: #f5f3ec;
-}
-
-.product-section-heading {
-    max-width: 620px;
-    margin-bottom: 42px;
-}
-
-.product-section-heading h2 {
-    margin: 0;
-    color: #243b30;
-    font-family: Manrope, sans-serif;
-    font-size: clamp(28px, 4vw, 40px);
-    font-weight: 600;
-    letter-spacing: -.035em;
-}
-
-.product-section-heading p {
-    margin: 14px 0 0;
-    color: #758076;
-    font-size: 15px;
-    line-height: 1.8;
-}
-
-.product-variants-layout {
-    display: grid;
-    grid-template-columns: minmax(220px, .65fr) minmax(0, 1.35fr);
-    gap: 28px;
-    align-items: start;
-}
-
-.product-variant-list {
-    display: grid;
-    gap: 10px;
-}
-
-.product-variant-option {
-    min-height: 58px;
-    padding: 0 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid #e0e5db;
-    border-radius: 12px;
-    color: #526252;
-    background: #fffefa;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color .2s ease, background .2s ease;
-}
-
-.product-variant-option span {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.product-variant-option.is-active {
-    border-color: #737d43;
-    color: #243b30;
-    background: #edf1e8;
-}
-
-.product-variant-details {
-    padding: 30px;
-    border: 1px solid #e3e7de;
-    border-radius: 16px;
-    background: #fffefa;
-}
-
-.product-variant-heading span {
-    color: #8a9387;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .14em;
-}
-
-.product-variant-heading h3 {
-    margin: 8px 0 0;
-    color: #243b30;
-    font-size: 23px;
-    font-weight: 600;
-}
-
-.product-dimensions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+.product-inline-variants {
     margin-top: 26px;
 }
 
-.product-dimension {
-    padding: 18px;
-    display: grid;
+.product-inline-variants-label {
+    display: block;
+    margin-bottom: 11px;
+    color: #737d43;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .13em;
+}
+
+.product-inline-variant-list {
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    border-radius: 10px;
+}
+
+.product-inline-variant {
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #dce2d4;
+    border-radius: 999px;
+    color: #536b59;
+    background: #fffefa;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: color .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.product-inline-variant:hover {
+    border-color: #34463a;
+    color: #34463a;
+}
+
+.product-inline-variant.is-active {
+    border-color: #34463a;
+    color: #fff;
+    background: #34463a;
+}
+
+.product-inline-variant-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 16px;
+    margin-top: 12px;
+    padding: 11px 13px;
+    border: 1px solid #e8ebe4;
+    border-radius: 9px;
     background: #f5f6f0;
 }
 
-.product-dimension span {
-    color: #828c80;
-    font-size: 12px;
+.product-inline-dimension {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    min-width: 0;
+    font-size: 11px;
 }
 
-.product-dimension strong {
-    color: #304638;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.product-specifications {
-    margin-top: 30px;
-}
-
-.product-specifications h4 {
-    margin: 0 0 14px;
-    color: #304638;
-    font-size: 15px;
-}
-
-.product-specification-row {
-    padding: 13px 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    border-bottom: 1px solid #e9ece5;
-    font-size: 13px;
-}
-
-.product-specification-row span {
+.product-inline-dimension span {
     color: #899187;
-    text-transform: capitalize;
 }
 
-.product-specification-row strong {
+.product-inline-dimension strong {
     color: #304638;
-    text-align: right;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     overflow-wrap: anywhere;
-}
-
-.product-variant-quote {
-    min-height: 48px;
-    margin-top: 26px;
-    padding: 0 20px;
 }
 
 /* LLAMADA A LA ACCIÓN */
@@ -1599,10 +1437,6 @@ const quotationUrl = computed(
         max-width: 700px;
     }
 
-    .product-variants-layout {
-        grid-template-columns: 1fr;
-    }
-
     .product-contact-content {
         align-items: flex-start;
         flex-direction: column;
@@ -1665,31 +1499,6 @@ const quotationUrl = computed(
 
     .product-information h1 {
         font-size: 34px;
-    }
-
-    .product-variants-section {
-        padding: 58px 0;
-    }
-
-    .product-variant-details {
-        padding: 20px;
-    }
-
-    .product-dimensions {
-        gap: 8px;
-    }
-
-    .product-dimension {
-        padding: 14px;
-    }
-
-    .product-specification-row {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .product-specification-row strong {
-        text-align: left;
     }
 
     .product-contact-section {

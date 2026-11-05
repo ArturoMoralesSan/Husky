@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewQuoteMail;
 use App\Models\Product;
 use App\Models\Quote;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -64,10 +67,36 @@ class QuoteController extends Controller
                 ->withInput();
         }
 
-        Quote::create([
+        $quote = Quote::create([
             ...$validated,
             'status' => 'pendiente',
         ]);
+
+        // Cargar las relaciones para disponer de los datos
+        // del producto o servicio en el correo.
+        $quote->load(['product', 'service']);
+
+        try {
+            $recipient = config('mail.quotes_notification_address');
+
+            if ($recipient) {
+                Mail::to($recipient)->send(
+                    new NewQuoteMail(
+                        quote: $quote,
+                        quoteUrl: route('admin.quotes.index'),
+                    )
+                );
+            } else {
+                Log::warning(
+                    'No se envió la notificación de cotización: falta configurar el destinatario.'
+                );
+            }
+        } catch (\Throwable $exception) {
+            Log::error('Error al enviar el correo de nueva cotización.', [
+                'quote_id' => $quote->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         return back()->with(
             'success',

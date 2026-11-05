@@ -140,34 +140,97 @@ onUnmounted(() => {
 // SEO
 // -----------------------------------------------------------------------------
 
+const siteUrl = 'https://industriashusky.com.mx'
+
+/**
+ * Convierte rutas relativas en URLs absolutas.
+ * Conserva las URLs que ya son absolutas.
+ */
+const absoluteUrl = (
+    url: string | null | undefined,
+): string | undefined => {
+    if (!url) return undefined
+
+    try {
+        return new URL(url, `${siteUrl}/`).toString()
+    } catch {
+        return undefined
+    }
+}
+
 const canonicalUrl = computed(
-    () => `https://industriashusky.com.mx/servicios/${props.service.slug}`,
+    () =>
+        `${siteUrl}/servicios/${encodeURIComponent(props.service.slug)}`,
 )
 
 const seoTitle = computed(
     () => `${props.service.name} | Industrias Husky`,
 )
 
-const seoDescription = computed(
-    () => props.service.description ||
-        `Conoce el servicio de ${props.service.name} de Industrias Husky.`,
+const seoDescription = computed(() => {
+    const description =
+        props.service.description?.trim() ||
+        `Conoce el servicio de ${props.service.name} de Industrias Husky y descubre cómo podemos ayudarte con tu proyecto.`
+
+    return description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}...`
+        : description
+})
+
+// Imágenes absolutas para los buscadores y redes sociales.
+const serviceImages = computed(() => {
+    const images = props.service.gallery
+        .map(image => absoluteUrl(image.url))
+        .filter((url): url is string => Boolean(url))
+
+    if (!images.length && props.service.main_image) {
+        const mainImage = absoluteUrl(props.service.main_image)
+
+        if (mainImage) {
+            images.push(mainImage)
+        }
+    }
+
+    return images
+})
+
+const socialImage = computed(
+    () =>
+        serviceImages.value[0] ||
+        `${siteUrl}/images/og-default.jpg`,
 )
+
+const socialImageAlt = computed(
+    () =>
+        props.service.gallery.find(image => image.is_primary)?.alt ||
+        props.service.gallery[0]?.alt ||
+        props.service.name,
+)
+
+// -----------------------------------------------------------------------------
+// DATOS ESTRUCTURADOS
+// -----------------------------------------------------------------------------
 
 const serviceSchema = computed(() => ({
     '@context': 'https://schema.org',
     '@type': 'Service',
+    '@id': `${canonicalUrl.value}#service`,
     name: props.service.name,
     description: seoDescription.value,
-    ...(props.service.gallery.length
-        ? { image: props.service.gallery.map(image => image.url) }
-        : props.service.main_image
-            ? { image: [props.service.main_image] }
-            : {}),
+    ...(serviceImages.value.length
+        ? { image: serviceImages.value }
+        : {}),
     url: canonicalUrl.value,
+
     provider: {
         '@type': 'Organization',
         name: 'Industrias Husky',
-        url: 'https://industriashusky.com.mx',
+        url: `${siteUrl}/`,
+    },
+
+    areaServed: {
+        '@type': 'Country',
+        name: 'México',
     },
 }))
 
@@ -194,12 +257,6 @@ const contactUrl = computed(
             :content="seoDescription"
         />
 
-        <meta
-            head-key="robots"
-            name="robots"
-            content="index, follow"
-        />
-
         <link
             head-key="canonical"
             rel="canonical"
@@ -213,9 +270,28 @@ const contactUrl = computed(
         />
 
         <meta
+            head-key="author"
+            name="author"
+            content="Industrias Husky"
+        />
+
+        <meta
+            head-key="language"
+            name="language"
+            content="es-MX"
+        />
+
+        <!-- OPEN GRAPH -->
+        <meta
             head-key="og:type"
             property="og:type"
             content="website"
+        />
+
+        <meta
+            head-key="og:site_name"
+            property="og:site_name"
+            content="Industrias Husky"
         />
 
         <meta
@@ -237,12 +313,24 @@ const contactUrl = computed(
         />
 
         <meta
-            v-if="currentImage"
             head-key="og:image"
             property="og:image"
-            :content="currentImage"
+            :content="socialImage"
         />
 
+        <meta
+            head-key="og:image:alt"
+            property="og:image:alt"
+            :content="socialImageAlt"
+        />
+
+        <meta
+            head-key="og:locale"
+            property="og:locale"
+            content="es_MX"
+        />
+
+        <!-- TWITTER -->
         <meta
             head-key="twitter:card"
             name="twitter:card"
@@ -261,6 +349,19 @@ const contactUrl = computed(
             :content="seoDescription"
         />
 
+        <meta
+            head-key="twitter:image"
+            name="twitter:image"
+            :content="socialImage"
+        />
+
+        <meta
+            head-key="twitter:image:alt"
+            name="twitter:image:alt"
+            :content="socialImageAlt"
+        />
+
+        <!-- DATOS ESTRUCTURADOS -->
         <component
             :is="'script'"
             type="application/ld+json"

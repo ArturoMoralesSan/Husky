@@ -1,4 +1,3 @@
-
 <mjml>
   <mj-head>
     <mj-title>Nueva cotización | Industrias Husky</mj-title>
@@ -24,25 +23,32 @@
         text-decoration: none;
       }
     </mj-style>
+
+    <mj-style>
+      .quote-description {
+        border-left: 3px solid #737d43;
+        padding-left: 15px;
+      }
+    </mj-style>
   </mj-head>
 
   <mj-body background-color="#f2f5f2" width="600px">
 
     <!-- CABECERA -->
-  <mj-section
-    background-color="#34463a"
-    padding="26px 30px"
-  >
-    <mj-column width="100%">
-      <mj-image
-        src="https://husky.test/images/husky_blanco.webp"
-        alt="Industrias Husky"
-        align="center"
-        width="145px"
-        padding="0"
-      />
-    </mj-column>
-  </mj-section>
+    <mj-section
+      background-color="#34463a"
+      padding="26px 30px"
+    >
+      <mj-column width="100%">
+        <mj-image
+            src="{{ $logoUrl }}"
+            alt="Industrias Husky"
+            align="center"
+            width="145px"
+            padding="0"
+        />
+      </mj-column>
+    </mj-section>
 
     <!-- CONTENIDO PRINCIPAL -->
     <mj-section
@@ -144,7 +150,7 @@
         </mj-text>
 
         <mj-text padding="0 0 8px">
-          <strong>Folio:</strong> {{ $quote->folio }}
+          <strong>Concepto:</strong> {{ $quote->item_name }}
         </mj-text>
 
         <mj-text padding="0 0 8px">
@@ -152,7 +158,7 @@
         </mj-text>
 
         <mj-text padding="0 0 8px">
-          <strong>Estado:</strong> Pendiente
+          <strong>Estado:</strong> {{ ucfirst(str_replace('_', ' ', $quote->status)) }}
         </mj-text>
 
         <mj-text padding="0 0 5px">
@@ -160,12 +166,12 @@
         </mj-text>
 
         <mj-text
+          css-class="quote-description"
           background-color="#f5f7f4"
           color="#526158"
           padding="15px"
-          border-left="3px solid #737d43"
         >
-          {{ $quote->description }}
+          {{ $quote->description ?? 'Sin descripción adicional.' }}
         </mj-text>
 
       </mj-column>

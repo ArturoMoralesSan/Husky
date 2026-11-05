@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Head } from '@inertiajs/vue3'
@@ -41,21 +40,51 @@ const props = defineProps<{
 }>()
 
 // -----------------------------------------------------------------------------
-// SEO
+// CONFIGURACIÓN SEO
 // -----------------------------------------------------------------------------
+
+const siteUrl = 'https://industriashusky.com.mx'
 
 const seoTitle = 'Proyectos de madera | Industrias Husky'
 
 const seoDescription =
     'Conoce los proyectos de Industrias Husky: soluciones en madera de pino impregnada y maderas tropicales para construcción, infraestructura, industria y proyectos especiales.'
 
-const canonicalUrl = 'https://industriashusky.com.mx/proyectos'
+const canonicalUrl = `${siteUrl}/proyectos`
 
+/**
+ * Convierte rutas relativas en URLs absolutas.
+ * Conserva las URLs que ya son absolutas.
+ */
+const absoluteUrl = (
+    url: string | null | undefined,
+): string | undefined => {
+    if (!url) return undefined
+
+    try {
+        return new URL(url, `${siteUrl}/`).toString()
+    } catch {
+        return undefined
+    }
+}
+
+// Imagen para compartir la página.
 const ogImage = computed(
     () =>
-        props.banner?.image_url ||
-        'https://industriashusky.com.mx/images/og-default.jpg',
+        absoluteUrl(props.banner?.image_url) ||
+        `${siteUrl}/images/og-default.jpg`,
 )
+
+const ogImageAlt = computed(
+    () =>
+        props.banner?.alt_text ||
+        props.banner?.title ||
+        'Proyectos de Industrias Husky',
+)
+
+// -----------------------------------------------------------------------------
+// DATOS ESTRUCTURADOS
+// -----------------------------------------------------------------------------
 
 const collectionSchema = computed(() => ({
     '@context': 'https://schema.org',
@@ -67,7 +96,7 @@ const collectionSchema = computed(() => ({
     isPartOf: {
         '@type': 'WebSite',
         name: 'Industrias Husky',
-        url: 'https://industriashusky.com.mx/',
+        url: `${siteUrl}/`,
     },
 
     mainEntity: {
@@ -81,13 +110,18 @@ const collectionSchema = computed(() => ({
             item: {
                 '@type': 'CreativeWork',
                 name: project.title,
-                description: project.description || undefined,
-                image: project.image || undefined,
-                url: `${canonicalUrl}/${project.slug}`,
+                ...(project.description
+                    ? { description: project.description }
+                    : {}),
+                ...(absoluteUrl(project.image)
+                    ? { image: absoluteUrl(project.image) }
+                    : {}),
+                url: `${canonicalUrl}/${encodeURIComponent(project.slug)}`,
+
                 creator: {
                     '@type': 'Organization',
                     name: 'Industrias Husky',
-                    url: 'https://industriashusky.com.mx/',
+                    url: `${siteUrl}/`,
                 },
             },
         })),
@@ -126,12 +160,6 @@ const projects = computed(() =>
             head-key="description"
             name="description"
             :content="seoDescription"
-        />
-
-        <meta
-            head-key="robots"
-            name="robots"
-            content="index, follow"
         />
 
         <link
@@ -198,7 +226,7 @@ const projects = computed(() =>
         <meta
             head-key="og:image:alt"
             property="og:image:alt"
-            content="Proyectos de Industrias Husky"
+            :content="ogImageAlt"
         />
 
         <meta
@@ -232,6 +260,12 @@ const projects = computed(() =>
             :content="ogImage"
         />
 
+        <meta
+            head-key="twitter:image:alt"
+            name="twitter:image:alt"
+            :content="ogImageAlt"
+        />
+
         <!-- DATOS ESTRUCTURADOS -->
         <component
             :is="'script'"
@@ -259,6 +293,7 @@ const projects = computed(() =>
                 :items="projects"
                 eyebrow="NUESTROS PROYECTOS"
                 title="Proyectos que reflejan nuestra experiencia."
+                :heading-level="1"
                 empty-text="Estamos preparando nuestro catálogo de proyectos."
             />
         </main>

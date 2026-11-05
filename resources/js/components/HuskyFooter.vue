@@ -1,6 +1,7 @@
+
 <script setup lang="ts">
 import { Facebook, Instagram } from 'lucide-vue-next'
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted } from 'vue'
 
 const year = new Date().getFullYear()
 
@@ -11,11 +12,22 @@ const links = [
     { label: 'Aplicaciones', href: '#proyectos' },
     { label: 'Servicios', href: '#servicios' },
     { label: 'Proyectos', href: '#proyectos' },
+    {
+        label: 'Preguntas frecuentes',
+        href: '/preguntas-frecuentes',
+        page: true,
+    },
     { label: 'Clientes', href: '#clientes' },
     { label: 'Contacto', href: '#contacto' },
 ]
 
-async function navigateToSection(hash: string) {
+function navigateToSection(hash: string, isPage = false) {
+    // Navegación a una página independiente.
+    if (isPage) {
+        window.location.href = hash
+        return
+    }
+
     const landingPath = '/'
 
     if (window.location.pathname !== landingPath) {
@@ -27,10 +39,12 @@ async function navigateToSection(hash: string) {
 
     if (target) {
         history.pushState(null, '', hash)
+
         target.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
         })
+
         return
     }
 
@@ -66,6 +80,7 @@ onMounted(() => {
 <template>
     <footer class="husky-footer">
         <div class="husky-container husky-footer-main">
+            <!-- LOGO -->
             <a
                 class="husky-brand husky-brand-light"
                 href="/#inicio"
@@ -80,17 +95,21 @@ onMounted(() => {
                 />
             </a>
 
+            <!-- NAVEGACIÓN -->
             <nav aria-label="Navegación del pie de página">
                 <a
                     v-for="link in links"
                     :key="link.href + link.label"
-                    :href="`/${link.href}`"
-                    @click.prevent="navigateToSection(link.href)"
+                    :href="link.page ? link.href : `/${link.href}`"
+                    @click.prevent="
+                        navigateToSection(link.href, link.page)
+                    "
                 >
                     {{ link.label }}
                 </a>
             </nav>
 
+            <!-- REDES SOCIALES -->
             <div class="husky-footer-social">
                 <a
                     href="https://www.facebook.com/industriashusky"
@@ -113,6 +132,7 @@ onMounted(() => {
                 </a>
             </div>
 
+            <!-- VOLVER ARRIBA -->
             <a
                 class="husky-back-top"
                 href="/#inicio"
@@ -122,6 +142,7 @@ onMounted(() => {
             </a>
         </div>
 
+        <!-- COPYRIGHT -->
         <div class="husky-container husky-footer-bottom">
             <span>
                 © {{ year }} Industrias Husky. Todos los derechos reservados.

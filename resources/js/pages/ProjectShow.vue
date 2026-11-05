@@ -140,33 +140,76 @@ onUnmounted(() => {
 // SEO
 // -----------------------------------------------------------------------------
 
+const siteUrl = 'https://industriashusky.com.mx'
+
+function absoluteUrl(url: string | null | undefined): string | null {
+    if (!url) return null
+
+    try {
+        return new URL(url, `${siteUrl}/`).toString()
+    } catch {
+        return null
+    }
+}
+
 const canonicalUrl = computed(
-    () => `https://industriashusky.com.mx/proyectos/${props.project.slug}`,
+    () => `${siteUrl}/proyectos/${encodeURIComponent(props.project.slug)}`,
 )
 
 const seoTitle = computed(
     () => `${props.project.name} | Industrias Husky`,
 )
 
-const seoDescription = computed(
-    () => props.project.description ||
-        `Conoce el proyecto ${props.project.name} realizado por Industrias Husky.`,
+const seoDescription = computed(() => {
+    const description =
+        props.project.description?.trim() ||
+        `Conoce el proyecto ${props.project.name} realizado por Industrias Husky.`
+
+    return description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}...`
+        : description
+})
+
+const projectImages = computed(() => {
+    const galleryImages = props.project.gallery
+        .map(image => absoluteUrl(image.url))
+        .filter((url): url is string => Boolean(url))
+
+    if (galleryImages.length) {
+        return galleryImages
+    }
+
+    const mainImage = absoluteUrl(props.project.main_image)
+
+    return mainImage ? [mainImage] : []
+})
+
+const socialImage = computed(
+    () => projectImages.value[0] ||
+        `${siteUrl}/images/og-default.jpg`,
+)
+
+const socialImageAlt = computed(
+    () =>
+        props.project.gallery.find(image => image.is_primary)?.alt ||
+        props.project.gallery[0]?.alt ||
+        props.project.name,
 )
 
 const projectSchema = computed(() => ({
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',
+    '@id': `${canonicalUrl.value}#project`,
     name: props.project.name,
     description: seoDescription.value,
-    ...(props.project.gallery.length
-        ? { image: props.project.gallery.map(image => image.url) }
-        : props.project.main_image
-            ? { image: [props.project.main_image] }
-            : {}),
+    ...(projectImages.value.length
+        ? { image: projectImages.value }
+        : {}),
     url: canonicalUrl.value,
     creator: {
         '@type': 'Organization',
         name: 'Industrias Husky',
+        url: siteUrl,
     },
 }))
 
@@ -193,12 +236,6 @@ const contactUrl = computed(
             :content="seoDescription"
         />
 
-        <meta
-            head-key="robots"
-            name="robots"
-            content="index, follow"
-        />
-
         <link
             head-key="canonical"
             rel="canonical"
@@ -211,10 +248,18 @@ const contactUrl = computed(
             content="#f5f3ec"
         />
 
+        <!-- OPEN GRAPH -->
+
         <meta
             head-key="og:type"
             property="og:type"
             content="article"
+        />
+
+        <meta
+            head-key="og:site_name"
+            property="og:site_name"
+            content="Industrias Husky"
         />
 
         <meta
@@ -236,11 +281,24 @@ const contactUrl = computed(
         />
 
         <meta
-            v-if="currentImage"
+            head-key="og:locale"
+            property="og:locale"
+            content="es_MX"
+        />
+
+        <meta
             head-key="og:image"
             property="og:image"
-            :content="currentImage"
+            :content="socialImage"
         />
+
+        <meta
+            head-key="og:image:alt"
+            property="og:image:alt"
+            :content="socialImageAlt"
+        />
+
+        <!-- TWITTER -->
 
         <meta
             head-key="twitter:card"
@@ -259,6 +317,20 @@ const contactUrl = computed(
             name="twitter:description"
             :content="seoDescription"
         />
+
+        <meta
+            head-key="twitter:image"
+            name="twitter:image"
+            :content="socialImage"
+        />
+
+        <meta
+            head-key="twitter:image:alt"
+            name="twitter:image:alt"
+            :content="socialImageAlt"
+        />
+
+        <!-- DATOS ESTRUCTURADOS -->
 
         <component
             :is="'script'"

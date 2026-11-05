@@ -1,9 +1,9 @@
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { ArrowUpRight, Menu, X } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ArrowUpRight, Menu, X } from 'lucide-vue-next'
 
-const menuOpen = ref(false);
+const menuOpen = ref(false)
 
 const links = [
     { label: 'Inicio', href: '#inicio' },
@@ -11,73 +11,77 @@ const links = [
     { label: 'Productos', href: '#productos' },
     { label: 'Servicios', href: '#servicios' },
     { label: 'Proyectos', href: '#proyectos' },
+    { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes', page: true },
     { label: 'Clientes', href: '#clientes' },
     { label: 'Contacto', href: '#contacto' },
-];
+]
 
 function closeMenu() {
-    menuOpen.value = false;
+    menuOpen.value = false
 }
 
-async function navigateToSection(hash: string) {
-    closeMenu();
+async function navigateToSection(hash: string, isPage = false) {
+    closeMenu()
 
-    const landingPath = '/';
+    // Navegación a una página independiente.
+    if (isPage) {
+        window.location.href = hash
+        return
+    }
+
+    const landingPath = '/'
 
     // Si estamos en otra página, regresar a la landing.
     if (window.location.pathname !== landingPath) {
-        window.location.href = `${landingPath}${hash}`;
-        return;
+        window.location.href = `${landingPath}${hash}`
+        return
     }
 
     // Si ya estamos en la landing, desplazarnos a la sección.
-    const target = document.querySelector(hash);
+    const target = document.querySelector(hash)
 
     if (target) {
-        history.pushState(null, '', hash);
+        history.pushState(null, '', hash)
 
         target.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
-        });
+        })
 
-        return;
+        return
     }
 
-    window.location.hash = hash;
+    window.location.hash = hash
 }
 
-// Permite recuperar el desplazamiento cuando se carga la landing
-// desde otra página mediante una URL como /#productos.
 async function scrollToInitialHash() {
-    if (window.location.pathname !== '/') return;
+    if (window.location.pathname !== '/') return
 
-    const hash = window.location.hash;
+    const hash = window.location.hash
 
-    if (!hash) return;
+    if (!hash) return
 
-    await nextTick();
+    await nextTick()
 
-    // Esperar a que Vue y el contenido de la landing estén disponibles.
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            const target = document.querySelector(hash);
+            const target = document.querySelector(hash)
 
             target?.scrollIntoView({
                 behavior: 'auto',
                 block: 'start',
-            });
-        });
-    });
+            })
+        })
+    })
 }
 
 onMounted(() => {
-    scrollToInitialHash();
-});
+    scrollToInitialHash()
+})
 
 onUnmounted(() => {
-    closeMenu();
-});
+    closeMenu()
+})
 </script>
 
 <template>
@@ -118,9 +122,11 @@ onUnmounted(() => {
             <a
                 v-for="link in links"
                 :key="link.href"
-                :href="`/${link.href}`"
-                :class="{ 'is-active': link.href === '#inicio' }"
-                @click.prevent="navigateToSection(link.href)"
+                :href="link.page ? link.href : `/${link.href}`"
+                :class="{
+                    'is-active': link.href === '#inicio',
+                }"
+                @click.prevent="navigateToSection(link.href, link.page)"
             >
                 {{ link.label }}
             </a>

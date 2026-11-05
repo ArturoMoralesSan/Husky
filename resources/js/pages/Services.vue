@@ -36,25 +36,66 @@ interface Service {
 
 const props = defineProps<{
     banner: Banner | null
-    services: Service[]
+    projects: Service[]
+    maquila: Service[]
 }>()
 
 // -----------------------------------------------------------------------------
-// SEO
+// CONFIGURACIÓN SEO
 // -----------------------------------------------------------------------------
+
+const siteUrl = 'https://industriashusky.com.mx'
 
 const seoTitle = 'Servicios de madera | Industrias Husky'
 
 const seoDescription =
-    'Conoce los servicios de Industrias Husky: soluciones en madera de pino impregnada y maderas tropicales para construcción, infraestructura, industria y proyectos especiales.'
+    'Conoce los servicios de Industrias Husky: proyectos de madera y servicios de maquila para construcción, infraestructura, industria y proyectos especiales.'
 
-const canonicalUrl = 'https://industriashusky.com.mx/servicios'
+const canonicalUrl = `${siteUrl}/servicios`
 
+/**
+ * Convierte rutas relativas en URLs absolutas.
+ * Conserva las URLs que ya son absolutas.
+ */
+const absoluteUrl = (
+    url: string | null | undefined,
+): string | undefined => {
+    if (!url) return undefined
+
+    try {
+        return new URL(url, `${siteUrl}/`).toString()
+    } catch {
+        return undefined
+    }
+}
+
+// Imagen para compartir la página.
 const ogImage = computed(
     () =>
-        props.banner?.image_url ||
-        'https://industriashusky.com.mx/images/og-default.jpg',
+        absoluteUrl(props.banner?.image_url) ||
+        `${siteUrl}/images/og-default.jpg`,
 )
+
+// Texto alternativo para la imagen social.
+const ogImageAlt = computed(
+    () =>
+        props.banner?.alt_text ||
+        props.banner?.title ||
+        'Servicios de Industrias Husky',
+)
+
+// -----------------------------------------------------------------------------
+// COLECCIONES PARA SEO
+// -----------------------------------------------------------------------------
+
+const allServices = computed(() => [
+    ...props.projects,
+    ...props.maquila,
+])
+
+// -----------------------------------------------------------------------------
+// DATOS ESTRUCTURADOS
+// -----------------------------------------------------------------------------
 
 const collectionSchema = computed(() => ({
     '@context': 'https://schema.org',
@@ -66,27 +107,35 @@ const collectionSchema = computed(() => ({
     isPartOf: {
         '@type': 'WebSite',
         name: 'Industrias Husky',
-        url: 'https://industriashusky.com.mx/',
+        url: `${siteUrl}/`,
     },
 
     mainEntity: {
         '@type': 'ItemList',
-        numberOfItems: props.services.length,
+        numberOfItems: allServices.value.length,
 
-        itemListElement: props.services.map((service, index) => ({
+        itemListElement: allServices.value.map((service, index) => ({
             '@type': 'ListItem',
             position: index + 1,
 
             item: {
                 '@type': 'Service',
                 name: service.title,
-                description: service.description || undefined,
-                image: service.image || undefined,
-                url: `${canonicalUrl}/${service.slug}`,
+
+                ...(service.description
+                    ? { description: service.description }
+                    : {}),
+
+                ...(absoluteUrl(service.image)
+                    ? { image: absoluteUrl(service.image) }
+                    : {}),
+
+                url: `${canonicalUrl}/${encodeURIComponent(service.slug)}`,
+
                 provider: {
                     '@type': 'Organization',
                     name: 'Industrias Husky',
-                    url: 'https://industriashusky.com.mx/',
+                    url: `${siteUrl}/`,
                 },
             },
         })),
@@ -98,11 +147,11 @@ const collectionSchemaJson = computed(() =>
 )
 
 // -----------------------------------------------------------------------------
-// SERVICIOS
+// PROYECTOS
 // -----------------------------------------------------------------------------
 
-const services = computed(() =>
-    props.services.map((service, index) => ({
+const projects = computed(() =>
+    props.projects.map((service, index) => ({
         id: service.id,
         slug: service.slug,
         number: String(index + 1).padStart(2, '0'),
@@ -110,8 +159,23 @@ const services = computed(() =>
         description: service.description || '',
         image: service.image,
         imageAlt: service.imageAlt || service.title,
+        href: `/servicios/${service.slug}`,
+    })),
+)
 
-        // Cada tarjeta abre su propia ficha individual.
+// -----------------------------------------------------------------------------
+// MAQUILA
+// -----------------------------------------------------------------------------
+
+const maquila = computed(() =>
+    props.maquila.map((service, index) => ({
+        id: service.id,
+        slug: service.slug,
+        number: String(index + 1).padStart(2, '0'),
+        title: service.title,
+        description: service.description || '',
+        image: service.image,
+        imageAlt: service.imageAlt || service.title,
         href: `/servicios/${service.slug}`,
     })),
 )
@@ -125,12 +189,6 @@ const services = computed(() =>
             head-key="description"
             name="description"
             :content="seoDescription"
-        />
-
-        <meta
-            head-key="robots"
-            name="robots"
-            content="index, follow"
         />
 
         <link
@@ -197,7 +255,7 @@ const services = computed(() =>
         <meta
             head-key="og:image:alt"
             property="og:image:alt"
-            content="Servicios de Industrias Husky"
+            :content="ogImageAlt"
         />
 
         <meta
@@ -231,6 +289,12 @@ const services = computed(() =>
             :content="ogImage"
         />
 
+        <meta
+            head-key="twitter:image:alt"
+            name="twitter:image:alt"
+            :content="ogImageAlt"
+        />
+
         <!-- DATOS ESTRUCTURADOS -->
         <component
             :is="'script'"
@@ -251,14 +315,57 @@ const services = computed(() =>
                 min-height="60vh"
             />
 
-            <!-- CATÁLOGO DE SERVICIOS -->
-            <ItemCards
+            <!-- INTRODUCCIÓN GENERAL -->
+            <section
                 id="catalogo-servicios"
+                class="mx-auto max-w-7xl px-6 pb-6 pt-16 md:px-10 md:pt-24"
+            >
+                <div class="max-w-3xl">
+                    <p
+                        class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-[#737d43]"
+                    >
+                        LO QUE HACEMOS
+                    </p>
+
+                    <h1
+                        class="text-3xl font-semibold leading-tight tracking-tight text-[#243b30] md:text-5xl"
+                    >
+                        Conoce todos nuestros servicios.
+                    </h1>
+
+                    <p
+                        class="mt-6 max-w-2xl text-base leading-8 text-[#5c6b60] md:text-lg"
+                    >
+                        En Industrias Husky desarrollamos soluciones en madera
+                        para diferentes necesidades. Conoce nuestros proyectos
+                        y servicios de maquila, respaldados por nuestra
+                        experiencia y compromiso con la calidad.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECCIÓN DE PROYECTOS -->
+            <ItemCards
+                id="proyectos"
                 variant="grid"
-                :items="services"
-                eyebrow="NUESTROS SERVICIOS"
-                title="Soluciones pensadas para cada proyecto."
-                empty-text="Estamos preparando nuestro catálogo de servicios."
+                :items="projects"
+                :heading-level="2"
+                eyebrow="NUESTRO TRABAJO"
+                title="Proyectos"
+                :compact="true"
+                empty-text="Estamos preparando nuestra sección de proyectos."
+            />
+
+            <!-- SECCIÓN DE MAQUILA -->
+            <ItemCards
+                id="maquila"
+                variant="grid"
+                :items="maquila"
+                :heading-level="2"
+                eyebrow="SOLUCIONES A TU MEDIDA"
+                title="Maquila"
+                :compact="true"
+                empty-text="Estamos preparando nuestra sección de maquila."
             />
         </main>
 

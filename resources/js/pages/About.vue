@@ -78,6 +78,45 @@ const props = defineProps<{
 }>()
 
 // -----------------------------------------------------------------------------
+// SEO
+// -----------------------------------------------------------------------------
+
+const seoTitle =
+    'Nosotros | Historia y experiencia en madera | Industrias Husky'
+
+const seoDescription =
+    'Conoce la historia de Industrias Husky, nuestra experiencia en el tratamiento de madera, misión, visión y valores que respaldan nuestro compromiso con la calidad.'
+
+const canonicalUrl =
+    'https://industriashusky.com.mx/nosotros'
+
+const ogImage =
+    'https://industriashusky.com.mx/images/og-default.jpg'
+
+const aboutPageSchema = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: seoTitle,
+    description: seoDescription,
+    url: canonicalUrl,
+    inLanguage: 'es-MX',
+    isPartOf: {
+        '@type': 'WebSite',
+        name: 'Industrias Husky',
+        url: 'https://industriashusky.com.mx/',
+    },
+    about: {
+        '@type': 'Organization',
+        name: 'Industrias Husky',
+        url: 'https://industriashusky.com.mx/',
+    },
+}))
+
+const aboutPageSchemaJson = computed(() =>
+    JSON.stringify(aboutPageSchema.value),
+)
+
+// -----------------------------------------------------------------------------
 // ICONOS DE VALORES
 // -----------------------------------------------------------------------------
 
@@ -118,7 +157,7 @@ const historyGallery = computed(() =>
         .sort((a, b) => a.sort_order - b.sort_order)
         .map(image => ({
             src: image.url,
-            alt: image.alt || 'Galería de Industrias Husky',
+            alt: image.alt?.trim() || 'Imagen de la historia de Industrias Husky',
         })),
 )
 
@@ -166,30 +205,106 @@ function getValueIcon(icon?: string | null): LucideIcon {
 </script>
 
 <template>
-    <Head title="Nosotros | Industrias Husky">
+    <Head :title="seoTitle">
+        <!-- SEO PRINCIPAL -->
         <meta
             name="description"
-            content="Conoce Industrias Husky, nuestra historia, misión, visión y compromiso con la calidad en madera de pino impregnada y maderas tropicales."
+            :content="seoDescription"
         />
 
         <meta
-            name="keywords"
-            content="Industrias Husky, madera, madera de pino, madera impregnada, maderas tropicales, soluciones en madera"
+            name="author"
+            content="Industrias Husky"
+        />
+
+        <meta
+            name="robots"
+            content="index, follow"
+        />
+
+        <meta
+            name="language"
+            content="es-MX"
+        />
+
+        <meta
+            name="theme-color"
+            content="#243b30"
+        />
+
+        <!-- URL CANÓNICA -->
+        <link
+            rel="canonical"
+            :href="canonicalUrl"
+        />
+
+        <!-- OPEN GRAPH -->
+        <meta
+            property="og:type"
+            content="website"
+        />
+
+        <meta
+            property="og:site_name"
+            content="Industrias Husky"
         />
 
         <meta
             property="og:title"
-            content="Nosotros | Industrias Husky"
+            :content="seoTitle"
         />
 
         <meta
             property="og:description"
-            content="Conoce nuestra historia, filosofía y compromiso con la calidad."
+            :content="seoDescription"
         />
 
         <meta
-            property="og:type"
-            content="website"
+            property="og:url"
+            :content="canonicalUrl"
+        />
+
+        <meta
+            property="og:image"
+            :content="ogImage"
+        />
+
+        <meta
+            property="og:image:alt"
+            content="Industrias Husky, soluciones en madera"
+        />
+
+        <meta
+            property="og:locale"
+            content="es_MX"
+        />
+
+        <!-- TWITTER CARD -->
+        <meta
+            name="twitter:card"
+            content="summary_large_image"
+        />
+
+        <meta
+            name="twitter:title"
+            :content="seoTitle"
+        />
+
+        <meta
+            name="twitter:description"
+            :content="seoDescription"
+        />
+
+        <meta
+            name="twitter:image"
+            :content="ogImage"
+        />
+
+        <!-- DATOS ESTRUCTURADOS -->
+        <component
+            :is="'script'"
+            type="application/ld+json"
+            v-html="aboutPageSchemaJson"
         />
     </Head>
 
@@ -524,7 +639,19 @@ function getValueIcon(icon?: string | null): LucideIcon {
 /* HISTORIA */
 
 .about-history {
-    background: var(--linen, #f5f3ec);
+    background: #34463a;
+}
+
+.history-content .about-eyebrow {
+    color: #fff;
+}
+
+.history-content .about-heading {
+    color: #fff;
+}
+
+.history-content .about-description {
+    color: #fff;
 }
 
 .history-grid {
@@ -534,21 +661,33 @@ function getValueIcon(icon?: string | null): LucideIcon {
     gap: clamp(50px, 8vw, 110px);
 }
 
-.history-visual {
-    min-height: 420px;
-    padding: 22px;
-    border-radius: 28px;
-    background: var(--sage, #dce2d4);
-}
+/* GALERÍA */
 
-/* CONTENEDOR DE LA GALERÍA */
+.history-visual {
+    position: relative;
+    height: clamp(340px, 38vw, 510px);
+    min-height: 340px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #d9ded1;
+    padding: 0;
+}
 
 .history-visual :deep(.image-gallery) {
     width: 100%;
     height: 100%;
-    min-height: 376px;
+    min-height: 100%;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: inherit;
+}
+
+.history-visual :deep(img) {
+    border-radius: inherit;
+    transition: transform 0.7s ease;
+}
+
+.history-visual:hover :deep(img) {
+    transform: scale(1.035);
 }
 
 .history-visual-inner {
@@ -652,7 +791,7 @@ function getValueIcon(icon?: string | null): LucideIcon {
     line-height: 1.8;
 }
 
-/* GRID AUTOMÁTICO: MISIÓN, VISIÓN Y OBJETIVOS */
+/* MISIÓN, VISIÓN Y OBJETIVOS */
 
 .purpose-grid {
     display: grid;
@@ -751,10 +890,8 @@ function getValueIcon(icon?: string | null): LucideIcon {
 /* VALORES */
 
 .about-values {
-    background: var(--linen, #f5f3ec);
+    background: var(--linen, #f1eee8);
 }
-
-/* GRID AUTOMÁTICO: VALORES */
 
 .values-heading {
     margin-bottom: 60px;
@@ -974,12 +1111,12 @@ function getValueIcon(icon?: string | null): LucideIcon {
     }
 
     .history-visual {
+        height: 330px;
         min-height: 330px;
-        padding: 12px;
     }
 
     .history-visual :deep(.image-gallery) {
-        min-height: 306px;
+        min-height: 100%;
     }
 
     .history-visual-inner {

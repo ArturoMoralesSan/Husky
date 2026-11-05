@@ -25,6 +25,11 @@ interface Banner {
     open_in_new_tab: boolean
 }
 
+interface ProductVariant {
+    id: number
+    name: string
+}
+
 interface Product {
     id: number
     slug: string
@@ -32,6 +37,7 @@ interface Product {
     description: string | null
     image: string | null
     imageAlt: string
+    variants: ProductVariant[]
 }
 
 const props = defineProps<{
@@ -50,9 +56,21 @@ const seoDescription =
 
 const canonicalUrl = 'https://industriashusky.com.mx/productos'
 
+const absoluteUrl = (url: string | null | undefined): string | undefined => {
+    if (!url) {
+        return undefined
+    }
+
+    if (/^https?:\/\//i.test(url)) {
+        return url
+    }
+
+    return `https://industriashusky.com.mx/${url.replace(/^\/+/, '')}`
+}
+
 const ogImage = computed(
     () =>
-        props.banner?.image_url ||
+        absoluteUrl(props.banner?.image_url) ||
         'https://industriashusky.com.mx/images/og-default.jpg',
 )
 
@@ -62,6 +80,7 @@ const collectionSchema = computed(() => ({
     name: seoTitle,
     description: seoDescription,
     url: canonicalUrl,
+    inLanguage: 'es-MX',
 
     isPartOf: {
         '@type': 'WebSite',
@@ -81,7 +100,7 @@ const collectionSchema = computed(() => ({
                 '@type': 'Product',
                 name: product.title,
                 description: product.description || undefined,
-                image: product.image || undefined,
+                image: absoluteUrl(product.image),
                 url: `${canonicalUrl}/${product.slug}`,
             },
         })),
@@ -105,6 +124,9 @@ const products = computed(() =>
         image: product.image,
         imageAlt: product.imageAlt || product.title,
 
+        // Variantes del producto.
+        variants: product.variants ?? [],
+
         // Cada tarjeta abre su propia ficha individual.
         href: `/productos/${product.slug}`,
     })),
@@ -121,12 +143,14 @@ const products = computed(() =>
             :content="seoDescription"
         />
 
+        <!-- ROBOTS -->
         <meta
             head-key="robots"
             name="robots"
             content="index, follow"
         />
 
+        <!-- CANONICAL -->
         <link
             head-key="canonical"
             rel="canonical"
@@ -249,12 +273,12 @@ const products = computed(() =>
             <ItemCards
                 id="catalogo-productos"
                 variant="grid"
+                :heading-level="1"
                 :items="products"
                 eyebrow="NUESTRAS SOLUCIONES"
                 title="Productos diseñados para durar."
                 empty-text="Estamos preparando nuestro catálogo de productos."
-            >
-            </ItemCards>
+            />
         </main>
 
         <HuskyFooter />
