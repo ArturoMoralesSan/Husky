@@ -1,9 +1,9 @@
+
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import {
     ArrowLeft,
-    ArrowUpRight,
     ChevronLeft,
     ChevronRight,
     X,
@@ -93,6 +93,110 @@ function changeImage(direction: number) {
     selectedImage.value = images[nextIndex]
 }
 
+// -----------------------------------------------------------------------------
+// SWIPE TÁCTIL
+// -----------------------------------------------------------------------------
+
+interface PointerPosition {
+    x: number
+    y: number
+    pointerId: number
+}
+
+const pointerStart = ref<PointerPosition | null>(null)
+const suppressGalleryClick = ref(false)
+
+let clickResetTimer: ReturnType<typeof setTimeout> | null = null
+
+function handlePointerStart(event: PointerEvent) {
+    if (event.pointerType !== 'touch') return
+
+    const target = event.target
+
+    if (target instanceof Element && target.closest('button')) {
+        return
+    }
+
+    pointerStart.value = {
+        x: event.clientX,
+        y: event.clientY,
+        pointerId: event.pointerId,
+    }
+
+    const element = event.currentTarget
+
+    if (element instanceof HTMLElement) {
+        try {
+            element.setPointerCapture(event.pointerId)
+        } catch {
+            // El navegador puede no permitir capturar el puntero.
+        }
+    }
+}
+
+function handlePointerEnd(event: PointerEvent) {
+    const start = pointerStart.value
+
+    if (!start || event.pointerId !== start.pointerId) return
+
+    pointerStart.value = null
+
+    if (event.pointerType !== 'touch') return
+
+    const differenceX = event.clientX - start.x
+    const differenceY = event.clientY - start.y
+
+    const horizontalMovement = Math.abs(differenceX)
+    const verticalMovement = Math.abs(differenceY)
+
+    // Evitar confundir el scroll vertical con un swipe horizontal.
+    if (horizontalMovement < 45) return
+    if (horizontalMovement < verticalMovement * 1.2) return
+
+    changeImage(differenceX < 0 ? 1 : -1)
+
+    // Bloquear el clic sintético que algunos navegadores generan
+    // después del gesto táctil.
+    suppressGalleryClick.value = true
+
+    if (clickResetTimer) {
+        clearTimeout(clickResetTimer)
+    }
+
+    clickResetTimer = setTimeout(() => {
+        suppressGalleryClick.value = false
+        clickResetTimer = null
+    }, 500)
+}
+
+function handlePointerCancel(event: PointerEvent) {
+    if (
+        pointerStart.value &&
+        pointerStart.value.pointerId === event.pointerId
+    ) {
+        pointerStart.value = null
+    }
+}
+
+function handleMainImageClick() {
+    if (suppressGalleryClick.value) {
+        suppressGalleryClick.value = false
+
+        if (clickResetTimer) {
+            clearTimeout(clickResetTimer)
+            clickResetTimer = null
+        }
+
+        return
+    }
+
+    openGallery()
+}
+
+// -----------------------------------------------------------------------------
+// TECLADO
+// -----------------------------------------------------------------------------
+
 function handleGalleryKeydown(event: KeyboardEvent) {
     if (!showGallery.value) return
 
@@ -108,6 +212,10 @@ function handleGalleryKeydown(event: KeyboardEvent) {
         changeImage(-1)
     }
 }
+
+// -----------------------------------------------------------------------------
+// ACTUALIZACIÓN DE GALERÍA
+// -----------------------------------------------------------------------------
 
 watch(
     () => props.project.gallery,
@@ -134,6 +242,10 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('keydown', handleGalleryKeydown)
     document.body.style.overflow = ''
+
+    if (clickResetTimer) {
+        clearTimeout(clickResetTimer)
+    }
 })
 
 // -----------------------------------------------------------------------------
@@ -216,14 +328,6 @@ const projectSchema = computed(() => ({
 const projectSchemaJson = computed(
     () => JSON.stringify(projectSchema.value),
 )
-
-// -----------------------------------------------------------------------------
-// CONTACTO
-// -----------------------------------------------------------------------------
-
-const contactUrl = computed(
-    () => `/contacto?proyecto=${props.project.id}`,
-)
 </script>
 
 <template>
@@ -234,6 +338,12 @@ const contactUrl = computed(
             head-key="description"
             name="description"
             :content="seoDescription"
+        />
+
+        <meta
+            head-key="robots"
+            name="robots"
+            content="index, follow"
         />
 
         <link
@@ -345,6 +455,7 @@ const contactUrl = computed(
 
         <main>
             <!-- MIGAS DE PAN -->
+
             <section class="product-breadcrumb">
                 <div class="husky-container">
                     <Link href="/" class="product-back-link">
@@ -367,10 +478,12 @@ const contactUrl = computed(
             </section>
 
             <!-- INFORMACIÓN PRINCIPAL -->
+
             <section class="product-detail-section">
                 <div class="husky-container">
                     <div class="product-detail-grid">
                         <!-- GALERÍA -->
+
                         <div class="product-gallery">
                             <div
                                 class="product-main-image"
@@ -378,14 +491,18 @@ const contactUrl = computed(
                                 role="button"
                                 tabindex="0"
                                 aria-label="Abrir galería de imágenes"
-                                @click="openGallery()"
+                                @click="handleMainImageClick"
                                 @keydown.enter.prevent="openGallery()"
                                 @keydown.space.prevent="openGallery()"
+                                @pointerdown="handlePointerStart"
+                                @pointerup="handlePointerEnd"
+                                @pointercancel="handlePointerCancel"
                             >
                                 <img
                                     v-if="currentImage"
                                     :src="currentImage"
                                     :alt="selectedImage?.alt || project.name"
+                                    draggable="false"
                                 />
 
                                 <div
@@ -433,7 +550,7 @@ const contactUrl = computed(
                                     {{ galleryIndex + 1 }} / {{ galleryCount }}
                                 </span>
 
-                                <span>Haz clic en la imagen para ampliar</span>
+                                <span>Desliza o toca la imagen para ampliar</span>
                             </div>
 
                             <div
@@ -462,6 +579,7 @@ const contactUrl = computed(
                         </div>
 
                         <!-- DATOS DEL PROYECTO -->
+
                         <div class="product-information">
                             <span class="product-eyebrow">
                                 INDUSTRIAS HUSKY
@@ -485,6 +603,7 @@ const contactUrl = computed(
         </main>
 
         <!-- VISOR DE GALERÍA -->
+
         <Transition name="gallery-fade">
             <div
                 v-if="showGallery && selectedImage"
@@ -515,7 +634,12 @@ const contactUrl = computed(
                         </span>
                     </div>
 
-                    <div class="product-lightbox-stage">
+                    <div
+                        class="product-lightbox-stage"
+                        @pointerdown="handlePointerStart"
+                        @pointerup="handlePointerEnd"
+                        @pointercancel="handlePointerCancel"
+                    >
                         <button
                             type="button"
                             class="product-lightbox-arrow"
@@ -531,6 +655,7 @@ const contactUrl = computed(
                             :key="selectedImage.id"
                             :src="selectedImage.url"
                             :alt="selectedImage.alt || project.name"
+                            draggable="false"
                         />
 
                         <button
@@ -652,6 +777,9 @@ const contactUrl = computed(
     background: #f0f2eb;
     cursor: zoom-in;
     outline-offset: 4px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-main-image img {
@@ -660,6 +788,8 @@ const contactUrl = computed(
     display: block;
     object-fit: cover;
     transition: transform .65s cubic-bezier(.2, .7, .2, 1);
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-main-image.has-image:hover img {
@@ -815,97 +945,6 @@ const contactUrl = computed(
     white-space: pre-line;
 }
 
-/* BOTONES */
-
-.product-quote-button,
-.product-contact-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    border-radius: 10px;
-    color: #fffefa;
-    background: #243b30;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: background .2s ease, transform .2s ease;
-}
-
-.product-quote-button {
-    width: 100%;
-    min-height: 56px;
-    margin-top: 34px;
-}
-
-.product-quote-button:hover {
-    background: #3b5946;
-    transform: translateY(-2px);
-}
-
-.product-quote-note {
-    margin: 13px 0 0;
-    color: #92988f;
-    font-size: 12px;
-    line-height: 1.7;
-    text-align: center;
-}
-
-/* LLAMADA A LA ACCIÓN */
-
-.product-contact-section {
-    padding: 72px 0;
-    background: #243b30;
-}
-
-.product-contact-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 36px;
-}
-
-.product-contact-content .product-eyebrow {
-    color: #c4d0b1;
-}
-
-.product-contact-content h2 {
-    max-width: 570px;
-    margin: 0;
-    color: #fffefa;
-    font-family: Manrope, sans-serif;
-    font-size: clamp(27px, 4vw, 39px);
-    font-weight: 500;
-    line-height: 1.2;
-}
-
-.product-contact-content p {
-    max-width: 540px;
-    margin: 14px 0 0;
-    color: #d0d9ce;
-    font-size: 14px;
-    line-height: 1.8;
-}
-
-.product-contact-button {
-    min-height: 54px;
-    flex: 0 0 auto;
-    padding: 0 24px;
-    color: #243b30;
-    background: #fffefa;
-}
-
-.product-contact-button:hover {
-    color: #243b30;
-    background: #dce2d4;
-    transform: translateY(-2px);
-}
-
-.product-back-section {
-    padding: 28px 0;
-    background: #fffefa;
-}
-
 /* VISOR DE GALERÍA */
 
 .product-lightbox {
@@ -1001,6 +1040,9 @@ const contactUrl = computed(
     grid-template-rows: minmax(0, 1fr);
     align-items: center;
     gap: 12px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-lightbox-stage img {
@@ -1014,6 +1056,8 @@ const contactUrl = computed(
     display: block;
     object-fit: contain;
     animation: gallery-image-in .25s ease;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-lightbox-arrow {
@@ -1126,11 +1170,6 @@ const contactUrl = computed(
         max-width: 700px;
     }
 
-    .product-contact-content {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
     .product-lightbox {
         padding: 12px;
     }
@@ -1188,14 +1227,6 @@ const contactUrl = computed(
 
     .product-information h1 {
         font-size: 34px;
-    }
-
-    .product-contact-section {
-        padding: 54px 0;
-    }
-
-    .product-contact-button {
-        width: 100%;
     }
 
     .product-lightbox {

@@ -1,7 +1,12 @@
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay } from 'swiper/modules'
+import type { Swiper as SwiperInstance } from 'swiper'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+
+import 'swiper/css'
 
 interface GalleryItem {
     src: string
@@ -20,78 +25,122 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const currentIndex = ref(0)
+const swiperInstance = ref<SwiperInstance | null>(null)
 const isPaused = ref(false)
 
-let autoplayTimer: ReturnType<typeof setInterval> | null = null
+const modules = [Autoplay]
 
-const stopAutoplay = () => {
-    if (autoplayTimer) {
-        clearInterval(autoplayTimer)
-        autoplayTimer = null
+const autoplayConfig = computed(() => ({
+    delay: props.interval,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+}))
+
+const hasMultipleImages = computed(() => props.items.length > 1)
+
+const onSwiper = (swiper: SwiperInstance) => {
+    swiperInstance.value = swiper
+
+    if (!props.autoplay || props.items.length <= 1) {
+        swiper.autoplay.stop()
     }
 }
 
-const startAutoplay = () => {
-    stopAutoplay()
-
-    if (
-        !props.autoplay ||
-        isPaused.value ||
-        props.items.length <= 1
-    ) {
-        return
-    }
-
-    autoplayTimer = setInterval(() => {
-        next()
-    }, props.interval)
+const onSlideChange = (swiper: SwiperInstance) => {
+    currentIndex.value = swiper.realIndex
 }
 
 const next = () => {
-    if (!props.items.length) return
-
-    currentIndex.value =
-        (currentIndex.value + 1) % props.items.length
+    swiperInstance.value?.slideNext()
 }
 
 const previous = () => {
-    if (!props.items.length) return
-
-    currentIndex.value =
-        (currentIndex.value - 1 + props.items.length) %
-        props.items.length
+    swiperInstance.value?.slidePrev()
 }
 
 const goTo = (index: number) => {
     if (index < 0 || index >= props.items.length) return
 
-    currentIndex.value = index
-    startAutoplay()
+    swiperInstance.value?.slideToLoop(index)
+    resumeAutoplay()
 }
 
 const pauseAutoplay = () => {
     isPaused.value = true
-    stopAutoplay()
+    swiperInstance.value?.autoplay.stop()
 }
 
 const resumeAutoplay = () => {
     isPaused.value = false
-    startAutoplay()
+
+    if (props.autoplay && props.items.length > 1) {
+        swiperInstance.value?.autoplay.start()
+    }
+}
+
+const handleFocusOut = (event: FocusEvent) => {
+    const container = event.currentTarget as HTMLElement
+    const nextTarget = event.relatedTarget as Node | null
+
+    if (!nextTarget || !container.contains(nextTarget)) {
+        resumeAutoplay()
+    }
 }
 
 watch(
     () => [props.items.length, props.autoplay, props.interval],
-    () => {
-        if (currentIndex.value >= props.items.length) {
-            currentIndex.value = 0
+    async () => {
+        await nextTick()
+
+        const swiper = swiperInstance.value
+
+        if (!swiper) return
+
+        swiper.params.autoplay = {
+            delay: props.interval,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
         }
 
-        startAutoplay()
+        swiper.update()
+
+        if (currentIndex.value >= props.items.length) {
+            currentIndex.value = 0
+            swiper.slideToLoop(0, 0)
+        }
+
+        if (props.autoplay && props.items.length > 1 && !isPaused.value) {
+            swiper.autoplay.start()
+        } else {
+            swiper.autoplay.stop()
+        }
     },
 )
 
-onMounted(startAutoplay)
-onUnmounted(stopAutoplay)
+watch(
+    () => props.items.map(item => item.src),
+    async () => {
+        await nextTick()
+
+        const swiper = swiperInstance.value
+
+        if (!swiper) return
+
+        currentIndex.value = 0
+        swiper.update()
+        swiper.slideToLoop(0, 0)
+    },
+)
+
+onMounted(() => {
+    if (!props.autoplay) {
+        swiperInstance.value?.autoplay.stop()
+    }
+})
+
+onUnmounted(() => {
+    swiperInstance.value = null
+})
 </script>
 
 <template>
@@ -101,16 +150,23 @@ onUnmounted(stopAutoplay)
         @mouseenter="pauseAutoplay"
         @mouseleave="resumeAutoplay"
         @focusin="pauseAutoplay"
-        @focusout="resumeAutoplay"
+        @focusout="handleFocusOut"
     >
         <div class="husky-gallery-viewport">
-            <div
-                class="husky-gallery-track"
-                :style="{
-                    transform: `translateX(-${currentIndex * 100}%)`,
-                }"
+            <Swiper
+                class="husky-gallery-swiper"
+                :modules="modules"
+                :loop="hasMultipleImages"
+                :slides-per-view="1"
+                :speed="650"
+                :autoplay="autoplayConfig"
+                :allow-touch-move="hasMultipleImages"
+                :grab-cursor="hasMultipleImages"
+                :watch-overflow="true"
+                @swiper="onSwiper"
+                @slide-change="onSlideChange"
             >
-                <div
+                <SwiperSlide
                     v-for="(item, index) in items"
                     :key="`${item.src}-${index}`"
                     class="husky-gallery-slide"
@@ -122,11 +178,11 @@ onUnmounted(stopAutoplay)
                         :loading="index === 0 ? 'eager' : 'lazy'"
                         draggable="false"
                     />
-                </div>
-            </div>
+                </SwiperSlide>
+            </Swiper>
 
             <div
-                v-if="items.length > 1"
+                v-if="hasMultipleImages"
                 class="husky-gallery-controls"
             >
                 <button
@@ -166,7 +222,7 @@ onUnmounted(stopAutoplay)
             </Transition>
 
             <div
-                v-if="items.length > 1"
+                v-if="hasMultipleImages"
                 class="husky-gallery-dots"
                 aria-label="Seleccionar fotografía"
             >
@@ -204,17 +260,17 @@ onUnmounted(stopAutoplay)
     background: #d9ded1;
 }
 
-.husky-gallery-track {
-    display: flex;
+.husky-gallery-swiper {
     width: 100%;
     height: 100%;
-    transition: transform 0.65s cubic-bezier(.22, .61, .36, 1);
-    will-change: transform;
+}
+
+.husky-gallery-swiper :deep(.swiper-wrapper) {
+    height: 100%;
 }
 
 .husky-gallery-slide {
     position: relative;
-    flex: 0 0 100%;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -226,6 +282,8 @@ onUnmounted(stopAutoplay)
     height: 100%;
     object-fit: cover;
     transition: transform 0.7s ease;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 .husky-gallery:hover .husky-gallery-slide[aria-hidden="false"] img {
@@ -234,6 +292,7 @@ onUnmounted(stopAutoplay)
 
 .husky-gallery-controls {
     position: absolute;
+    z-index: 5;
     inset: 0;
     display: flex;
     align-items: center;
@@ -264,6 +323,7 @@ onUnmounted(stopAutoplay)
 
 .husky-gallery-counter {
     position: absolute;
+    z-index: 5;
     right: 18px;
     bottom: 18px;
     padding: 8px 13px;
@@ -274,6 +334,7 @@ onUnmounted(stopAutoplay)
     font-size: 11px;
     letter-spacing: 1px;
     backdrop-filter: blur(8px);
+    pointer-events: none;
 }
 
 .husky-gallery-counter span {
@@ -349,10 +410,14 @@ onUnmounted(stopAutoplay)
         flex-direction: column;
         gap: 12px;
     }
+
+    .husky-gallery-arrow {
+        width: 34px;
+        height: 34px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .husky-gallery-track,
     .husky-gallery-slide img,
     .husky-gallery-arrow,
     .husky-gallery-dots button {

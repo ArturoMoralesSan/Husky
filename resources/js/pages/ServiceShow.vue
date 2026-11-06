@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
@@ -93,6 +94,137 @@ function changeImage(direction: number) {
     selectedImage.value = images[nextIndex]
 }
 
+// -----------------------------------------------------------------------------
+// SWIPE TÁCTIL
+// -----------------------------------------------------------------------------
+
+interface PointerPosition {
+    x: number
+    y: number
+    pointerId: number
+}
+
+const mainPointerStart = ref<PointerPosition | null>(null)
+const lightboxPointerStart = ref<PointerPosition | null>(null)
+const suppressGalleryClick = ref(false)
+
+let clickResetTimer: ReturnType<typeof setTimeout> | null = null
+
+function handlePointerStart(
+    event: PointerEvent,
+    area: 'main' | 'lightbox',
+) {
+    if (event.pointerType !== 'touch') return
+
+    const target = event.target
+
+    if (target instanceof Element && target.closest('button')) {
+        return
+    }
+
+    const position: PointerPosition = {
+        x: event.clientX,
+        y: event.clientY,
+        pointerId: event.pointerId,
+    }
+
+    if (area === 'main') {
+        mainPointerStart.value = position
+    } else {
+        lightboxPointerStart.value = position
+    }
+
+    const element = event.currentTarget
+
+    if (element instanceof HTMLElement) {
+        try {
+            element.setPointerCapture(event.pointerId)
+        } catch {
+            // El navegador puede no permitir capturar el puntero.
+        }
+    }
+}
+
+function handlePointerEnd(
+    event: PointerEvent,
+    area: 'main' | 'lightbox',
+) {
+    const start = area === 'main'
+        ? mainPointerStart.value
+        : lightboxPointerStart.value
+
+    if (!start || event.pointerId !== start.pointerId) return
+
+    if (area === 'main') {
+        mainPointerStart.value = null
+    } else {
+        lightboxPointerStart.value = null
+    }
+
+    if (event.pointerType !== 'touch') return
+
+    const differenceX = event.clientX - start.x
+    const differenceY = event.clientY - start.y
+
+    const horizontalMovement = Math.abs(differenceX)
+    const verticalMovement = Math.abs(differenceY)
+
+    // Reconocer únicamente desplazamientos horizontales.
+    if (horizontalMovement < 45) return
+    if (horizontalMovement < verticalMovement * 1.2) return
+
+    changeImage(differenceX < 0 ? 1 : -1)
+
+    if (area === 'main') {
+        suppressGalleryClick.value = true
+
+        if (clickResetTimer) {
+            clearTimeout(clickResetTimer)
+        }
+
+        clickResetTimer = setTimeout(() => {
+            suppressGalleryClick.value = false
+            clickResetTimer = null
+        }, 500)
+    }
+}
+
+function handlePointerCancel(
+    event: PointerEvent,
+    area: 'main' | 'lightbox',
+) {
+    const start = area === 'main'
+        ? mainPointerStart.value
+        : lightboxPointerStart.value
+
+    if (!start || start.pointerId !== event.pointerId) return
+
+    if (area === 'main') {
+        mainPointerStart.value = null
+    } else {
+        lightboxPointerStart.value = null
+    }
+}
+
+function handleMainImageClick() {
+    if (suppressGalleryClick.value) {
+        suppressGalleryClick.value = false
+
+        if (clickResetTimer) {
+            clearTimeout(clickResetTimer)
+            clickResetTimer = null
+        }
+
+        return
+    }
+
+    openGallery()
+}
+
+// -----------------------------------------------------------------------------
+// TECLADO
+// -----------------------------------------------------------------------------
+
 function handleGalleryKeydown(event: KeyboardEvent) {
     if (!showGallery.value) return
 
@@ -108,6 +240,10 @@ function handleGalleryKeydown(event: KeyboardEvent) {
         changeImage(-1)
     }
 }
+
+// -----------------------------------------------------------------------------
+// ACTUALIZACIÓN DE GALERÍA
+// -----------------------------------------------------------------------------
 
 watch(
     () => props.service.gallery,
@@ -134,6 +270,10 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('keydown', handleGalleryKeydown)
     document.body.style.overflow = ''
+
+    if (clickResetTimer) {
+        clearTimeout(clickResetTimer)
+    }
 })
 
 // -----------------------------------------------------------------------------
@@ -142,10 +282,6 @@ onUnmounted(() => {
 
 const siteUrl = 'https://industriashusky.com.mx'
 
-/**
- * Convierte rutas relativas en URLs absolutas.
- * Conserva las URLs que ya son absolutas.
- */
 const absoluteUrl = (
     url: string | null | undefined,
 ): string | undefined => {
@@ -177,7 +313,6 @@ const seoDescription = computed(() => {
         : description
 })
 
-// Imágenes absolutas para los buscadores y redes sociales.
 const serviceImages = computed(() => {
     const images = props.service.gallery
         .map(image => absoluteUrl(image.url))
@@ -400,7 +535,6 @@ const contactUrl = computed(
             <section class="product-detail-section">
                 <div class="husky-container">
                     <div class="product-detail-grid">
-
                         <!-- GALERÍA -->
                         <div class="product-gallery">
                             <div
@@ -409,14 +543,18 @@ const contactUrl = computed(
                                 role="button"
                                 tabindex="0"
                                 aria-label="Abrir galería de imágenes"
-                                @click="openGallery()"
+                                @click="handleMainImageClick"
                                 @keydown.enter.prevent="openGallery()"
                                 @keydown.space.prevent="openGallery()"
+                                @pointerdown="handlePointerStart($event, 'main')"
+                                @pointerup="handlePointerEnd($event, 'main')"
+                                @pointercancel="handlePointerCancel($event, 'main')"
                             >
                                 <img
                                     v-if="currentImage"
                                     :src="currentImage"
                                     :alt="selectedImage?.alt || service.name"
+                                    draggable="false"
                                 />
 
                                 <div
@@ -464,7 +602,7 @@ const contactUrl = computed(
                                     {{ galleryIndex + 1 }} / {{ galleryCount }}
                                 </span>
 
-                                <span>Haz clic en la imagen para ampliar</span>
+                                <span>Desliza o toca la imagen para ampliar</span>
                             </div>
 
                             <div
@@ -571,7 +709,12 @@ const contactUrl = computed(
                         </span>
                     </div>
 
-                    <div class="product-lightbox-stage">
+                    <div
+                        class="product-lightbox-stage"
+                        @pointerdown="handlePointerStart($event, 'lightbox')"
+                        @pointerup="handlePointerEnd($event, 'lightbox')"
+                        @pointercancel="handlePointerCancel($event, 'lightbox')"
+                    >
                         <button
                             type="button"
                             class="product-lightbox-arrow"
@@ -587,6 +730,7 @@ const contactUrl = computed(
                             :key="selectedImage.id"
                             :src="selectedImage.url"
                             :alt="selectedImage.alt || service.name"
+                            draggable="false"
                         />
 
                         <button
@@ -708,6 +852,9 @@ const contactUrl = computed(
     background: #f0f2eb;
     cursor: zoom-in;
     outline-offset: 4px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-main-image img {
@@ -716,6 +863,8 @@ const contactUrl = computed(
     display: block;
     object-fit: cover;
     transition: transform .65s cubic-bezier(.2, .7, .2, 1);
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-main-image.has-image:hover img {
@@ -1099,6 +1248,9 @@ const contactUrl = computed(
     grid-template-rows: minmax(0, 1fr);
     align-items: center;
     gap: 12px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-lightbox-stage img {
@@ -1112,6 +1264,8 @@ const contactUrl = computed(
     display: block;
     object-fit: contain;
     animation: gallery-image-in .25s ease;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-lightbox-arrow {

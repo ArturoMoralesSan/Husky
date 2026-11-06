@@ -1,16 +1,15 @@
+
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import {
     ArrowLeft,
-    ArrowRight,
     ArrowUpRight,
     Check,
     ChevronLeft,
     ChevronRight,
     X,
     Maximize2,
-    Ruler,
     ShieldCheck,
     TreeDeciduous,
 } from 'lucide-vue-next'
@@ -88,6 +87,79 @@ const galleryIndex = computed(() => {
 
 const galleryCount = computed(() => props.product.gallery.length)
 
+// -----------------------------------------------------------------------------
+// NAVEGACIÓN TÁCTIL CON POINTER EVENTS
+// -----------------------------------------------------------------------------
+
+const pointerStart = ref<{ x: number; y: number } | null>(null)
+const suppressGalleryClick = ref(false)
+
+let clickResetTimer: ReturnType<typeof setTimeout> | null = null
+
+function handlePointerStart(event: PointerEvent) {
+    if (event.pointerType !== 'touch') return
+
+    const target = event.target
+
+    if (
+        target instanceof HTMLElement &&
+        target.closest('button')
+    ) {
+        return
+    }
+
+    pointerStart.value = {
+        x: event.clientX,
+        y: event.clientY,
+    }
+}
+
+function handlePointerEnd(event: PointerEvent) {
+    if (event.pointerType !== 'touch' || !pointerStart.value) {
+        return
+    }
+
+    const differenceX = event.clientX - pointerStart.value.x
+    const differenceY = event.clientY - pointerStart.value.y
+
+    pointerStart.value = null
+
+    // Ignorar movimientos pequeños.
+    if (Math.abs(differenceX) < 45) return
+
+    // No interferir con el desplazamiento vertical.
+    if (Math.abs(differenceX) < Math.abs(differenceY)) return
+
+    changeImage(differenceX < 0 ? 1 : -1)
+
+    // Evitar que el clic posterior al gesto abra el visor.
+    suppressGalleryClick.value = true
+
+    if (clickResetTimer) {
+        clearTimeout(clickResetTimer)
+    }
+
+    clickResetTimer = setTimeout(() => {
+        suppressGalleryClick.value = false
+        clickResetTimer = null
+    }, 500)
+}
+
+function handleMainImageClick() {
+    if (suppressGalleryClick.value) {
+        suppressGalleryClick.value = false
+
+        if (clickResetTimer) {
+            clearTimeout(clickResetTimer)
+            clickResetTimer = null
+        }
+
+        return
+    }
+
+    openGallery()
+}
+
 function selectImage(image: GalleryImage) {
     selectedImage.value = image
 }
@@ -158,6 +230,10 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('keydown', handleGalleryKeydown)
     document.body.style.overflow = ''
+
+    if (clickResetTimer) {
+        clearTimeout(clickResetTimer)
+    }
 })
 
 // -----------------------------------------------------------------------------
@@ -434,14 +510,18 @@ const quotationUrl = computed(
                                 role="button"
                                 tabindex="0"
                                 aria-label="Abrir galería de imágenes"
-                                @click="openGallery()"
+                                @click="handleMainImageClick"
                                 @keydown.enter.prevent="openGallery()"
                                 @keydown.space.prevent="openGallery()"
+                                @pointerdown="handlePointerStart"
+                                @pointerup="handlePointerEnd"
+                                @pointercancel="pointerStart = null"
                             >
                                 <img
                                     v-if="currentImage"
                                     :src="currentImage"
                                     :alt="selectedImage?.alt || product.name"
+                                    draggable="false"
                                 />
 
                                 <div
@@ -489,7 +569,7 @@ const quotationUrl = computed(
                                     {{ galleryIndex + 1 }} / {{ galleryCount }}
                                 </span>
 
-                                <span>Haz clic en la imagen para ampliar</span>
+                                <span>Desliza o toca la imagen para ampliar</span>
                             </div>
 
                             <div
@@ -668,7 +748,6 @@ const quotationUrl = computed(
                     </div>
                 </div>
             </section>
-
         </main>
 
         <!-- VISOR DE GALERÍA -->
@@ -702,7 +781,12 @@ const quotationUrl = computed(
                         </span>
                     </div>
 
-                    <div class="product-lightbox-stage">
+                    <div
+                        class="product-lightbox-stage"
+                        @pointerdown="handlePointerStart"
+                        @pointerup="handlePointerEnd"
+                        @pointercancel="pointerStart = null"
+                    >
                         <button
                             type="button"
                             class="product-lightbox-arrow"
@@ -718,6 +802,7 @@ const quotationUrl = computed(
                             :key="selectedImage.id"
                             :src="selectedImage.url"
                             :alt="selectedImage.alt || product.name"
+                            draggable="false"
                         />
 
                         <button
@@ -839,6 +924,9 @@ const quotationUrl = computed(
     background: #f0f2eb;
     cursor: zoom-in;
     outline-offset: 4px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-main-image img {
@@ -847,6 +935,8 @@ const quotationUrl = computed(
     display: block;
     object-fit: cover;
     transition: transform .65s cubic-bezier(.2, .7, .2, 1);
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-main-image.has-image:hover img {
@@ -1312,6 +1402,9 @@ const quotationUrl = computed(
     grid-template-rows: minmax(0, 1fr);
     align-items: center;
     gap: 12px;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .product-lightbox-stage img {
@@ -1325,6 +1418,8 @@ const quotationUrl = computed(
     display: block;
     object-fit: contain;
     animation: gallery-image-in .25s ease;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .product-lightbox-arrow {
