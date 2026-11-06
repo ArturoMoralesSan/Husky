@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { Facebook, Instagram } from 'lucide-vue-next'
 import { nextTick, onMounted } from 'vue'
@@ -7,22 +6,17 @@ const year = new Date().getFullYear()
 
 const links = [
     { label: 'Inicio', href: '#inicio' },
-    { label: 'Nosotros', href: '#nosotros' },
-    { label: 'Productos', href: '#productos' },
+    { label: 'Nosotros', href: '/nosotros', page: true },
+    { label: 'Productos', href: '/productos', page: true },
     { label: 'Aplicaciones', href: '#proyectos' },
-    { label: 'Servicios', href: '#servicios' },
+    { label: 'Servicios', href: '/servicios', page: true },
     { label: 'Proyectos', href: '#proyectos' },
-    {
-        label: 'Preguntas frecuentes',
-        href: '/preguntas-frecuentes',
-        page: true,
-    },
     { label: 'Clientes', href: '#clientes' },
     { label: 'Contacto', href: '#contacto' },
+    { label: 'FAQ', href: '/preguntas-frecuentes', page: true },
 ]
 
 function navigateToSection(hash: string, isPage = false) {
-    // Navegación a una página independiente.
     if (isPage) {
         window.location.href = hash
         return

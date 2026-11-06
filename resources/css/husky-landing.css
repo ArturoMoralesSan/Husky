@@ -431,15 +431,23 @@
 }
 
 .husky-scroll-cue {
-    position: absolute;
+    position: absolute !important;
     z-index: 2;
     bottom: 28px;
-    left: 50%;
+
+    left: 0 !important;
+    right: 0 !important;
+
     display: grid;
     width: 24px;
     height: 30px;
+    margin-left: auto;
+    margin-right: auto;
+
     place-items: center;
     color: #fff;
+
+    transform: none !important;
 }
 
 @keyframes husky-hero-settle {

@@ -4,43 +4,56 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ArrowUpRight, Menu, X } from 'lucide-vue-next'
 
 const menuOpen = ref(false)
+const activeLink = ref('')
 
 const links = [
-    { label: 'Inicio', href: '#inicio' },
-    { label: 'Nosotros', href: '#nosotros' },
-    { label: 'Productos', href: '#productos' },
-    { label: 'Servicios', href: '#servicios' },
-    { label: 'Proyectos', href: '#proyectos' },
-    { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes', page: true },
-    { label: 'Clientes', href: '#clientes' },
-    { label: 'Contacto', href: '#contacto' },
+    { label: 'Inicio', href: '#inicio', type: 'anchor' },
+    { label: 'Nosotros', href: '/nosotros', type: 'page' },
+    { label: 'Productos', href: '/productos', type: 'page' },
+    { label: 'Servicios', href: '/servicios', type: 'page' },
+    { label: 'Proyectos', href: '#proyectos', type: 'anchor' },
+    { label: 'Clientes', href: '#clientes', type: 'anchor' },
+    { label: 'Contacto', href: '#contacto', type: 'anchor' },
+    { label: 'FAQ', href: '/preguntas-frecuentes', type: 'page' },
 ]
+
+let sectionObserver: IntersectionObserver | null = null
 
 function closeMenu() {
     menuOpen.value = false
 }
 
-async function navigateToSection(hash: string, isPage = false) {
+function getCurrentPage() {
+    return window.location.pathname.replace(/\/$/, '') || '/'
+}
+
+function isActive(link: typeof links[number]) {
+    const currentPath = getCurrentPage()
+
+    if (link.type === 'page') {
+        return currentPath === link.href
+    }
+
+    if (currentPath !== '/') {
+        return false
+    }
+
+    return activeLink.value === link.href
+}
+
+function navigateToSection(hash: string) {
     closeMenu()
 
-    // Navegación a una página independiente.
-    if (isPage) {
-        window.location.href = hash
+    if (window.location.pathname !== '/') {
+        window.location.href = `/${hash}`
         return
     }
 
-    const landingPath = '/'
-
-    // Si estamos en otra página, regresar a la landing.
-    if (window.location.pathname !== landingPath) {
-        window.location.href = `${landingPath}${hash}`
-        return
-    }
-
-    // Si ya estamos en la landing, desplazarnos a la sección.
     const target = document.querySelector(hash)
 
     if (target) {
+        activeLink.value = hash
+
         history.pushState(null, '', hash)
 
         target.scrollIntoView({
@@ -51,7 +64,15 @@ async function navigateToSection(hash: string, isPage = false) {
         return
     }
 
-    window.location.hash = hash
+    window.location.href = `/${hash}`
+}
+
+function navigateToPage(path: string) {
+    closeMenu()
+
+    if (getCurrentPage() === path) return
+
+    window.location.href = path
 }
 
 async function scrollToInitialHash() {
@@ -59,7 +80,12 @@ async function scrollToInitialHash() {
 
     const hash = window.location.hash
 
-    if (!hash) return
+    if (!hash) {
+        activeLink.value = '#inicio'
+        return
+    }
+
+    activeLink.value = hash
 
     await nextTick()
 
@@ -75,12 +101,54 @@ async function scrollToInitialHash() {
     })
 }
 
-onMounted(() => {
-    scrollToInitialHash()
+function setupSectionObserver() {
+    if (window.location.pathname !== '/') return
+
+    sectionObserver?.disconnect()
+
+    const sections = [
+        '#inicio',
+        '#proyectos',
+        '#clientes',
+        '#contacto',
+    ]
+
+    sectionObserver = new IntersectionObserver(
+        (entries) => {
+            const visibleSections = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort(
+                    (a, b) =>
+                        b.intersectionRatio - a.intersectionRatio,
+                )
+
+            if (visibleSections.length > 0) {
+                activeLink.value = `#${visibleSections[0].target.id}`
+            }
+        },
+        {
+            rootMargin: '-25% 0px -60% 0px',
+            threshold: [0, 0.1, 0.25, 0.5],
+        },
+    )
+
+    sections.forEach((selector) => {
+        const section = document.querySelector(selector)
+
+        if (section) {
+            sectionObserver?.observe(section)
+        }
+    })
+}
+
+onMounted(async () => {
+    await scrollToInitialHash()
+    setupSectionObserver()
 })
 
 onUnmounted(() => {
     closeMenu()
+    sectionObserver?.disconnect()
 })
 </script>
 
@@ -90,7 +158,7 @@ onUnmounted(() => {
         <a
             class="husky-brand"
             href="/#inicio"
-            aria-label="Husky Industrias, inicio"
+            aria-label="Industrias Husky, inicio"
             @click.prevent="navigateToSection('#inicio')"
         >
             <img
@@ -119,17 +187,27 @@ onUnmounted(() => {
             :class="{ 'is-open': menuOpen }"
             aria-label="Navegación principal"
         >
-            <a
-                v-for="link in links"
-                :key="link.href"
-                :href="link.page ? link.href : `/${link.href}`"
-                :class="{
-                    'is-active': link.href === '#inicio',
-                }"
-                @click.prevent="navigateToSection(link.href, link.page)"
-            >
-                {{ link.label }}
-            </a>
+            <template v-for="link in links" :key="link.href">
+                <a
+                    v-if="link.type === 'page'"
+                    :href="link.href"
+                    :class="{ 'is-active': isActive(link) }"
+                    :aria-current="isActive(link) ? 'page' : undefined"
+                    @click.prevent="navigateToPage(link.href)"
+                >
+                    {{ link.label }}
+                </a>
+
+                <a
+                    v-else
+                    :href="`/${link.href}`"
+                    :class="{ 'is-active': isActive(link) }"
+                    :aria-current="isActive(link) ? 'location' : undefined"
+                    @click.prevent="navigateToSection(link.href)"
+                >
+                    {{ link.label }}
+                </a>
+            </template>
         </nav>
 
         <!-- BOTÓN DE COTIZACIÓN -->
