@@ -5,12 +5,11 @@ import { nextTick, onMounted } from 'vue'
 const year = new Date().getFullYear()
 
 const links = [
-    { label: 'Inicio', href: '#inicio' },
+    { label: 'Inicio', href: '/' , page: true },
     { label: 'Nosotros', href: '/nosotros', page: true },
     { label: 'Productos', href: '/productos', page: true },
-    { label: 'Aplicaciones', href: '#proyectos' },
     { label: 'Servicios', href: '/servicios', page: true },
-    { label: 'Proyectos', href: '#proyectos' },
+    { label: 'Proyectos', href: '/proyectos', page: true },
     { label: 'Clientes', href: '#clientes' },
     { label: 'Contacto', href: '#contacto' },
     { label: 'FAQ', href: '/preguntas-frecuentes', page: true },

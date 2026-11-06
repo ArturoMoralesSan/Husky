@@ -1,0 +1,26 @@
+
+{
+    "id": "/",
+    "name": "Industrias Husky",
+    "short_name": "Husky",
+    "description": "Soluciones en madera, maquinaria y productos industriales.",
+    "lang": "es-MX",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#f5f3ec",
+    "theme_color": "#243b30",
+    "categories": [
+        "business",
+        "productivity"
+    ],
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}

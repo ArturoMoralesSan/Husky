@@ -7,11 +7,11 @@ const menuOpen = ref(false)
 const activeLink = ref('')
 
 const links = [
-    { label: 'Inicio', href: '#inicio', type: 'anchor' },
+    { label: 'Inicio', href: '/', type: 'page' },
     { label: 'Nosotros', href: '/nosotros', type: 'page' },
     { label: 'Productos', href: '/productos', type: 'page' },
     { label: 'Servicios', href: '/servicios', type: 'page' },
-    { label: 'Proyectos', href: '#proyectos', type: 'anchor' },
+    { label: 'Proyectos', href: '/proyectos', type: 'page' },
     { label: 'Clientes', href: '#clientes', type: 'anchor' },
     { label: 'Contacto', href: '#contacto', type: 'anchor' },
     { label: 'FAQ', href: '/preguntas-frecuentes', type: 'page' },
