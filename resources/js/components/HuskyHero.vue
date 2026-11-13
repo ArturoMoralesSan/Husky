@@ -207,7 +207,7 @@ onUnmounted(() => {
 ========================================= */
 
 .husky-hero-background {
-    background-position: center 29%;
+    background-position: center 40%;
     background-size: cover;
     background-repeat: no-repeat;
 

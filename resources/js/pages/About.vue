@@ -316,7 +316,7 @@ function getValueIcon(icon?: string | null): LucideIcon {
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#nosotros"
-                min-height="60vh"
+                min-height="80vh"
             />
 
             <!-- INTRODUCCIÓN -->

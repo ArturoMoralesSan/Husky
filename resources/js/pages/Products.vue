@@ -266,7 +266,7 @@ const products = computed(() =>
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#catalogo-productos"
-                min-height="60vh"
+                min-height="80vh"
             />
 
             <!-- CATÁLOGO DE PRODUCTOS -->

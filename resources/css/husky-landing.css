@@ -43,13 +43,6 @@
     object-fit: cover;
 }
 
-.husky-site img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 .husky-site a {
     color: inherit;
     text-decoration: none;
@@ -313,7 +306,7 @@
     position: absolute;
     inset: -12% 0;
     z-index: 0;
-    background: url('/images/hero-industrias-huskyN.jpeg') center 29% / cover no-repeat;
+    background: url('/images/herobannerhusky.jpg') center 29% / cover no-repeat;
     filter: brightness(1.08) contrast(1.08) saturate(1.12);
     transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.08);
     will-change: transform;
@@ -1707,10 +1700,6 @@
     }
 
     .husky-nav a::after {
-        display: none;
-    }
-
-    .husky-header-cta {
         display: none;
     }
 

@@ -312,7 +312,7 @@ const maquila = computed(() =>
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#catalogo-servicios"
-                min-height="60vh"
+                min-height="80vh"
             />
 
             <!-- INTRODUCCIÓN GENERAL -->

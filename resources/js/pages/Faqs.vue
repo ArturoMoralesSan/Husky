@@ -326,7 +326,7 @@ const faqSchemaJson = computed(() =>
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#preguntas"
-                min-height="60vh"
+                min-height="80vh"
             />
 
             <!-- PREGUNTAS FRECUENTES -->

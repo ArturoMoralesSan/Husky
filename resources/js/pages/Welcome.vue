@@ -567,7 +567,7 @@ function phoneUrl(phone: string) {
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#nosotros"
-                min-height="80vh"
+                min-height="85vh"
             />
 
             <!-- NOSOTROS -->

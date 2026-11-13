@@ -283,7 +283,7 @@ const projects = computed(() =>
             <HuskyHero
                 :banner="props.banner"
                 scroll-target="#catalogo-proyectos"
-                min-height="60vh"
+                min-height="80vh"
             />
 
             <!-- CATÁLOGO DE PROYECTOS -->
